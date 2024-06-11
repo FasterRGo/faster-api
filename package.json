@@ -12,7 +12,7 @@
   "scripts": {
     "build": "tsc",
     "start": "ts-node src/index.ts",
-    "dev": "nodemon src/indext.ts"
+    "dev": "nodemon src/index.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.15.0",
