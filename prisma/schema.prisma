@@ -22,35 +22,63 @@ enum RideStatus {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  name        String
-  email       String   @unique
-  phoneNumber String   @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  ride        Ride[]
+  id             Int              @id @default(autoincrement())
+  name           String
+  email          String           @unique
+  phoneNumber    String           @unique
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+  ride           Ride[]
+  CommonPlaces   CommonPlaces[]
+  FavoriteDriver FavoriteDriver[]
 }
 
 model Ride {
-  id        Int        @id @default(autoincrement())
+  id                       Int        @id @default(autoincrement())
+  userId                   Int
+  driverId                 Int
+  initialLatitudeLocation  String
+  initialLongitudeLocation String
+  finalLatitudeLoction     String
+  finalLongitudeLocation   String
+  createdAt                DateTime   @default(now())
+  updatedAt                DateTime   @default(now())
+  status                   RideStatus @default(REQUESTED)
+  user                     User       @relation(fields: [userId], references: [id])
+  driver                   Driver     @relation(fields: [driverId], references: [id])
+}
+
+model CommonPlaces {
+  id        Int      @id @default(autoincrement())
+  name      String
+  latitude  String
+  longitude String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model FavoriteDriver {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  driver    Driver   @relation(fields: [driverId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
   userId    Int
   driverId  Int
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @default(now())
-  status    RideStatus @default(REQUESTED)
-  user      User       @relation(fields: [userId], references: [id])
-  driver    Driver     @relation(fields: [driverId], references: [id])
 }
 
 model Driver {
-  id          Int      @id @default(autoincrement())
-  name        String
-  email       String   @unique
-  phoneNumber String   @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  car         Car[]
-  ride        Ride[]
+  id             Int              @id @default(autoincrement())
+  name           String
+  email          String           @unique
+  phoneNumber    String           @unique
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+  car            Car[]
+  ride           Ride[]
+  FavoriteDriver FavoriteDriver[]
 }
 
 model Car {
@@ -58,6 +86,6 @@ model Car {
   plate    String  @unique
   model    String
   brand    String
-  driver   Driver? @relation(fields: [driverId], references: [id])
   driverId Int?
+  driver   Driver? @relation(fields: [driverId], references: [id])
 }
