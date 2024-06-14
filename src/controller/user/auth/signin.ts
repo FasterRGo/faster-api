@@ -10,7 +10,7 @@ class UserSignInController {
         try {
             const { email, password } = await signInValidator.validate(req.body)
             const user = await findUserByEmail(email)
-            const { AUTH_TOKEN } = env
+            const { AUTH_TOKEN, REFRESH_TOKEN } = env
 
             if (!user) {
                 throw new Error('Email ou Senha inválidos')
@@ -24,16 +24,12 @@ class UserSignInController {
 
             const id = user.id;
 
-
             const token = sign({ id }, AUTH_TOKEN as string, {
                 expiresIn: 3600
             })
-
-            const refreshT = sign({ id }, AUTH_TOKEN as string, {
+            const refreshT = sign({ id }, REFRESH_TOKEN as string, {
                 expiresIn: 36000
             })
-
-
 
             return res.status(200).json({ user, accessToken: token, refreshToken: refreshT })
 
@@ -42,9 +38,6 @@ class UserSignInController {
                 message: error.message
             })
         }
-
-
-
     }
 }
 

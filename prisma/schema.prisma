@@ -28,7 +28,7 @@ model User {
   password       String
   phoneNumber    String           @unique
   createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
   ride           Ride[]
   CommonPlaces   CommonPlaces[]
   FavoriteDriver FavoriteDriver[]
@@ -44,7 +44,7 @@ model Ride {
   finalLatitudeLoction     String
   finalLongitudeLocation   String
   createdAt                DateTime   @default(now())
-  updatedAt                DateTime   @default(now())
+  updatedAt                DateTime   @updatedAt
   status                   RideStatus @default(REQUESTED)
   user                     User       @relation(fields: [userId], references: [id])
   driver                   Driver     @relation(fields: [driverId], references: [id])
@@ -58,7 +58,7 @@ model CommonPlaces {
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model FavoriteDriver {
@@ -66,7 +66,7 @@ model FavoriteDriver {
   user      User     @relation(fields: [userId], references: [id])
   driver    Driver   @relation(fields: [driverId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   userId    Int
   driverId  Int
 }
@@ -77,7 +77,7 @@ model Driver {
   email          String           @unique
   phoneNumber    String           @unique
   createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
   car            Car[]
   ride           Ride[]
   FavoriteDriver FavoriteDriver[]
