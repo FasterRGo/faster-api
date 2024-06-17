@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { sign, verify } from "jsonwebtoken";
 import { env } from "../../../environment/index";
-import { TokenPayload } from '../../../interfaces/tokenPayLoad'
+import { TokenPayload } from '../../../interfaces/'
 
 
 class UserRefreshController {
@@ -19,7 +19,7 @@ class UserRefreshController {
             const { id } = isValid as TokenPayload;
             const newToken = sign({ id }, AUTH_TOKEN as string, { expiresIn: 3600 });
 
-            return res.status(200).json({ auth: true, token: newToken })
+            return res.status(200).json({ auth: true, accessToken: newToken })
         } catch (error: any) {
             return res.status(400).json({ message: error.message })
         }
