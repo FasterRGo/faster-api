@@ -1,5 +1,5 @@
 import { prisma } from "../../service/prisma"
-import { IUser, IRide } from '../../interfaces/'
+import { IRide } from '../../interfaces/'
 
 const findUserRideOn = async (id: number) => {
     return await prisma.ride.findFirst({
@@ -18,6 +18,25 @@ const findUserRideOn = async (id: number) => {
     })
 }
 
+const cancelRide = async (id: number) => {
+    return await prisma.ride.updateMany({
+        where: {
+            AND: [{
+                id
+            }, {
+                NOT: [{
+                    OR: [
+                        { status: 'CANCELED' },
+                        { status: 'FINISHED' }
+                    ]
+                }]
+            }]
+        }, data: {
+            status: 'CANCELED'
+        }
+    })
+}
+
 const createRide = async (rideToBeIn: IRide) => {
     return await prisma.ride.create({
         data: rideToBeIn
@@ -27,5 +46,6 @@ const createRide = async (rideToBeIn: IRide) => {
 
 export {
     findUserRideOn,
-    createRide
+    createRide,
+    cancelRide
 }
