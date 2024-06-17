@@ -27,7 +27,9 @@ const cancelRide = async (id: number) => {
                 NOT: [{
                     OR: [
                         { status: 'CANCELED' },
-                        { status: 'FINISHED' }
+                        { status: 'FINISHED' },
+                        { status: 'ACCEPTED' },
+                        { status: 'INITIALIZED' },
                     ]
                 }]
             }]
