@@ -22,8 +22,7 @@ const findUserById = async (id: number) => {
 }
 
 const createUser = async (userToBeIN: IUser) => {
-    const { user } = prisma
-    return await user.create({ data: userToBeIN })
+    return await prisma.user.create({ data: userToBeIN })
 }
 
 

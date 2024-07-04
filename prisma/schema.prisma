@@ -37,17 +37,17 @@ model User {
 model Ride {
   id                       Int        @id @default(autoincrement())
   userId                   Int
-  driverId                 Int
-  password                 String
-  initialLatitudeLocation  String
-  initialLongitudeLocation String
-  finalLatitudeLoction     String
-  finalLongitudeLocation   String
+  driverId                 Int?
+  initialLatitudeLocation  Float
+  initialLongitudeLocation Float
+  finalLatitudeLocation    Float
+  finalLongitudeLocation   Float
+  price                    Float
   createdAt                DateTime   @default(now())
   updatedAt                DateTime   @updatedAt
   status                   RideStatus @default(REQUESTED)
   user                     User       @relation(fields: [userId], references: [id])
-  driver                   Driver     @relation(fields: [driverId], references: [id])
+  driver                   Driver?    @relation(fields: [driverId], references: [id])
 }
 
 model CommonPlaces {
