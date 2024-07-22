@@ -16,7 +16,8 @@
   },
   "scripts": {
     "dev": "nodemon",
-    "migrate": "npx prisma migrate dev"
+    "migrate": "npx prisma migrate dev",
+    "build": "tsc"
   },
   "dependencies": {
     "@prisma/client": "^5.15.0",
