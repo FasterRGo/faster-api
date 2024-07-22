@@ -1,44 +1,49 @@
 import { compare } from "bcryptjs";
-import { Request, Response } from 'express'
-import { sign } from 'jsonwebtoken'
+import { Request, Response } from 'express';
+import { sign } from 'jsonwebtoken';
 import { findUserByEmail } from "../../../database/repositories/userRepository";
-import { signInValidator } from "../../../utils/formValidator/userValidator";
 import { env } from "../../../environment";
 
 class UserSignInController {
     async execute(req: Request, res: Response) {
         try {
-            const { email, password } = await signInValidator.validate(req.body)
-            const user = await findUserByEmail(email)
-            const { AUTH_TOKEN, REFRESH_TOKEN } = env
+            const { email, password } = req.query;
 
-            if (!user) {
-                throw new Error('Email ou Senha inválidos')
+            if (!email || !password) {
+                return res.status(400).json({ message: 'Email and password are required' });
             }
 
-            const isPasswordValid = await compare(password, user.password)
+            const user = await findUserByEmail(email as string);
+            const { AUTH_TOKEN, REFRESH_TOKEN } = env;
+
+            if (!user) {
+                return res.status(400).json({ message: 'Invalid email or password' });
+            }
+
+            const isPasswordValid = await compare(password as string, user.password);
 
             if (!isPasswordValid) {
-                throw new Error('Email ou Senha inválidos')
+                return res.status(400).json({ message: 'Invalid email or password' });
             }
 
             const id = user.id;
 
             const token = sign({ id }, AUTH_TOKEN as string, {
-                expiresIn: 3600
-            })
-            const refreshT = sign({ id }, REFRESH_TOKEN as string, {
-                expiresIn: 36000
-            })
+                expiresIn: '1h'
+            });
 
-            return res.status(200).json({ user, accessToken: token, refreshToken: refreshT })
+            const refreshT = sign({ id }, REFRESH_TOKEN as string, {
+                expiresIn: '10h'
+            });
+
+            return res.status(200).json({ user, accessToken: token, refreshToken: refreshT });
 
         } catch (error: any) {
             return res.status(400).json({
                 message: error.message
-            })
+            });
         }
     }
 }
 
-export { UserSignInController }
+export { UserSignInController };
