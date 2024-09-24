@@ -1,5 +1,8 @@
 import { prisma } from "../../service/prisma"
 import { IUser } from '../../interfaces/'
+import { User } from "@prisma/client"
+
+type UserWith = Omit<User, 'password' | 'createdAt'>
 
 const findUserByEmail = async (email: string) => {
     const { user } = prisma
@@ -21,6 +24,12 @@ const findUserById = async (id: number) => {
 
 }
 
+const editUser = async (userToBeUpdated: UserWith) => {
+    const { user } = prisma
+    console.log(userToBeUpdated)
+    return await user.update({ where: { id: userToBeUpdated.id }, data: userToBeUpdated })
+}
+
 const createUser = async (userToBeIN: IUser) => {
     return await prisma.user.create({ data: userToBeIN })
 }
@@ -28,4 +37,4 @@ const createUser = async (userToBeIN: IUser) => {
 
 
 
-export { findUserByEmail, findUserById, createUser }
+export { findUserByEmail, findUserById, createUser, editUser }
