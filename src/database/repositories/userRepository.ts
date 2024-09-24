@@ -26,7 +26,6 @@ const findUserById = async (id: number) => {
 
 const editUser = async (userToBeUpdated: UserWith) => {
     const { user } = prisma
-    console.log(userToBeUpdated)
     return await user.update({ where: { id: userToBeUpdated.id }, data: userToBeUpdated })
 }
 
