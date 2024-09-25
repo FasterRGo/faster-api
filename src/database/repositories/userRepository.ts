@@ -33,7 +33,4 @@ const createUser = async (userToBeIN: IUser) => {
     return await prisma.user.create({ data: userToBeIN })
 }
 
-
-
-
 export { findUserByEmail, findUserById, createUser, editUser }

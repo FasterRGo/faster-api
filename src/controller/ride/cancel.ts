@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { cancelRide } from '../../database/repositories/rideRepository'
 
 class CancelRideController {
-
     async execute(req: Request, res: Response) {
         try {
             const { rideId } = req.params

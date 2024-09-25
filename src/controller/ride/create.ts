@@ -31,7 +31,7 @@ class CreateRideController {
                 userId
             })
 
-            return res.status(200).json(ride)
+            return res.status(201).json(ride)
 
         }
         catch (err: any) {

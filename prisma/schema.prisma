@@ -55,6 +55,7 @@ model CommonPlaces {
   name      String
   latitude  String
   longitude String
+  icon      String
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
