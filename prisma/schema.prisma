@@ -32,6 +32,7 @@ model User {
   ride           Ride[]
   CommonPlaces   CommonPlaces[]
   FavoriteDriver FavoriteDriver[]
+  paymentMethod  PaymentMethod[]
 }
 
 model Ride {
@@ -48,6 +49,19 @@ model Ride {
   status                   RideStatus @default(REQUESTED)
   user                     User       @relation(fields: [userId], references: [id])
   driver                   Driver?    @relation(fields: [driverId], references: [id])
+}
+
+model PaymentMethod {
+  id             Int        @id @default(autoincrement())
+  userId         Int
+  number         String
+  cvv            String
+  expirationDate String
+  type           String
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  status         RideStatus @default(REQUESTED)
+  user           User       @relation(fields: [userId], references: [id])
 }
 
 model CommonPlaces {
