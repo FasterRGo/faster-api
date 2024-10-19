@@ -4,36 +4,21 @@ import { PaymentMethod } from "@prisma/client"
 
 type ICommonPlaces = Omit<PaymentMethod, 'id' | 'createdAt' | 'updatedAt'>
 
-const listCommonPlaces = async (id: number) => {
-    return await prisma.commonPlaces.findMany({
-        where: {
-            userId: id
-        }, select: {
-            latitude: true,
-            longitude: true,
-            id: true,
-            name: true,
-            icon: true
+const createCardMethod = async (number: string, cvv: string, type: string, expirationDate: string, userId: number) => {
+    return await prisma.paymentMethod.create({
+        data: {
+            number,
+            cvv,
+            expirationDate,
+            type,
+            userId
         }
     })
 }
 
-const createCommonPlaces = async (commonPLace: ICommonPlaces) => {
-    return await prisma.commonPlaces.create({
-        data: commonPLace
-    })
-}
 
-const deleteCommonPlace = async (id: number) => {
-    return await prisma.commonPlaces.delete({
-        where: {
-            id
-        }
-    })
-}
 
 export {
-    listCommonPlaces,
-    createCommonPlaces,
-    deleteCommonPlace
+    createCardMethod,
+
 }
