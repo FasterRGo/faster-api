@@ -1,6 +1,6 @@
 import cardValidator from 'card-validator';
 
-const cardInfoValidator = (number: any, cvv: any, expirationDate: any): { isValid: boolean, error: string | null } => {
+const cardInfoValidator = (number: any, cvv: any, expirationDate: any): { isValid: boolean, error: string | null, flag?: string } => {
     const numberValidation = cardValidator.number(number);
     if (!numberValidation.isValid) {
         return { isValid: false, error: 'Número do cartão inválido.' };
@@ -16,7 +16,7 @@ const cardInfoValidator = (number: any, cvv: any, expirationDate: any): { isVali
         return { isValid: false, error: 'Data de validade inválida.' };
     }
 
-    return { isValid: true, error: null };
+    return { isValid: true, error: null, flag: numberValidation.card?.type };
 };
 
 export { cardInfoValidator }

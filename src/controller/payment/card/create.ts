@@ -16,7 +16,7 @@ class CreateCardController {
             }
             const hashedCardCVV = await bcrypt.hash(cvv, 12)
 
-            const card = await createCardMethod(number, hashedCardCVV, expirationDate, type, req.userId)
+            const card = await createCardMethod(number, hashedCardCVV, type, cInfo.flag as string, expirationDate, req.userId)
 
             return res.status(201).json({ message: "Cartão cadastrado com sucessso", card })
         }
