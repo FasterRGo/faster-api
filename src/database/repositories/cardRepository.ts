@@ -31,9 +31,13 @@ const listCards = async (id: number) => {
     })
 }
 
+const deleteCard = async (id: number, userId: number) => {
+    return await prisma.paymentMethod.delete({ where: { id, userId }, select: { number: true, expirationDate: true, flag: true, type: true } })
+}
 
 
 export {
     createCardMethod,
-    listCards
+    listCards,
+    deleteCard
 }
