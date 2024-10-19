@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { deleteCommonPlace, listCommonPlaces } from '../../database/repositories/commonPlaces'
+import { deleteCommonPlace, listCommonPlaces } from '../../database/repositories/commonPlacesRepository'
 
 class DeleteCommonPlacesController {
 

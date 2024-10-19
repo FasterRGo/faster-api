@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { createCommonPlaces, listCommonPlaces } from '../../database/repositories/commonPlaces'
+import { createCommonPlaces, listCommonPlaces } from '../../database/repositories/commonPlacesRepository'
 import { commonPlacesValidator } from '../../utils/formValidator/commonPlacesValidator'
 import { CommonPlaces } from '@prisma/client'
 
