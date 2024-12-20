@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { listCommonPlaces } from '../../database/repositories/commonPlaces'
+import { listCommonPlaces } from '../../database/repositories/commonPlacesRepository'
 
 class GetCommonPlacesController {
 
