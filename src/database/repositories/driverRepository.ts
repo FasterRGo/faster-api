@@ -7,18 +7,16 @@ type DriverWith = Omit<Driver, "password" | "createdAt">;
 const findDriverByEmail = async ({
   email,
   include = {},
-  select = {},
 }: {
   email: string;
   include?: any;
-  select?: any;
 }) => {
   const { driver } = prisma;
   return await driver.findUnique({
     where: {
       email,
     },
-    ...(include && { include }),
+    include,
   });
 };
 

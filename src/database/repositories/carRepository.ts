@@ -13,6 +13,7 @@ const listCars = async (id: number) => {
       brand: true,
       model: true,
       plate: true,
+      chassi: true,
     },
   });
 };
