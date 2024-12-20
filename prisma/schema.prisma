@@ -77,6 +77,7 @@ model Driver {
   name           String
   email          String           @unique
   phoneNumber    String           @unique
+  password       String
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   car            Car[]
