@@ -10,6 +10,9 @@ const findDriverByEmail = async (email: string) => {
     where: {
       email,
     },
+    include: {
+      car: true,
+    },
   });
 };
 
@@ -18,6 +21,9 @@ const findDriverById = async (id: number) => {
   return await driver.findUnique({
     where: {
       id,
+    },
+    include: {
+      car: true,
     },
   });
 };

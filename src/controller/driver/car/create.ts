@@ -1,20 +1,24 @@
 import { Request, Response } from "express";
-import { createCar, listCars } from "../../database/repositories/cars";
-import { carsValidator } from "../../utils/formValidator/carsValidator";
-import { Cars } from "@prisma/client";
+import { Car } from "@prisma/client";
+import {
+  createCars,
+  listCars,
+} from "../../../database/repositories/carRepository";
+import { carValidator } from "../../../utils/formValidator/carValidator";
 
 class CreateCarsController {
   async execute(req: Request, res: Response) {
     try {
-      const { name, icon, latitude, longitude } = await carsValidator.validate(
+      const { brand, chassi, model, year, plate } = await carValidator.validate(
         req.body
       );
       const cars = await createCars({
-        userId: req.userId,
-        latitude,
-        longitude,
-        name,
-        icon,
+        driverId: req.userId,
+        brand,
+        chassi,
+        model,
+        year,
+        plate,
       });
 
       return res.status(201).json({ cars });

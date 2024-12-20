@@ -114,6 +114,8 @@ model Car {
   plate    String  @unique
   model    String
   brand    String
+  year     String
+  chassi   String
   driverId Int?
   driver   Driver? @relation(fields: [driverId], references: [id])
 }
