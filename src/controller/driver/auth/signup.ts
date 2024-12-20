@@ -11,7 +11,7 @@ class DriverSignUpController {
     try {
       const { email, password, name, phoneNumber } =
         await signUpValidator.validate(req.body);
-      const emailAlreadyExists = await findDriverByEmail(email);
+      const emailAlreadyExists = await findDriverByEmail({ email });
 
       if (emailAlreadyExists) {
         throw new Error("Email já cadastrado");

@@ -4,15 +4,21 @@ import { Driver } from "@prisma/client";
 
 type DriverWith = Omit<Driver, "password" | "createdAt">;
 
-const findDriverByEmail = async (email: string) => {
+const findDriverByEmail = async ({
+  email,
+  include = {},
+  select = {},
+}: {
+  email: string;
+  include?: any;
+  select?: any;
+}) => {
   const { driver } = prisma;
   return await driver.findUnique({
     where: {
       email,
     },
-    include: {
-      car: true,
-    },
+    ...(include && { include }),
   });
 };
 

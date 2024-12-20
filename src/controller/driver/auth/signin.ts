@@ -15,7 +15,12 @@ class DriverSignInController {
           .json({ message: "Email and password are required" });
       }
 
-      const driver = await findDriverByEmail(email as string);
+      const driver = await findDriverByEmail({
+        email: email as string,
+        include: {
+          car: true,
+        },
+      });
       const { AUTH_TOKEN, REFRESH_TOKEN } = env;
 
       if (!driver) {
