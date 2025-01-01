@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -42,7 +39,7 @@ model User {
   FavoriteDriver FavoriteDriver[]
   PaymentMethod  PaymentMethod[]
   Invites        Invite[]
-  roomId         Int?
+  roomId         String?
 }
 
 model Ride {
@@ -60,6 +57,7 @@ model Ride {
   User                     User       @relation(fields: [userId], references: [id])
   Driver                   Driver?    @relation(fields: [driverId], references: [id])
   Room                     Room?
+  roomId                   String?
 }
 
 model DefaultPaymentMethod {
@@ -138,14 +136,14 @@ model Invite {
   userId   Int?
   driverId Int?
   Room     Room?        @relation(fields: [roomId], references: [id])
-  roomId   Int?
+  roomId   String?
   User     User?        @relation(fields: [userId], references: [id])
   Driver   Driver?      @relation(fields: [driverId], references: [id])
 }
 
 model Room {
-  id Int @unique
-
+  id      String   @id @default(uuid())
   invites Invite[]
-  ride    Ride     @relation(fields: [id], references: [id])
+  Ride    Ride     @relation(fields: [rideId], references: [id])
+  rideId  Int      @unique
 }

@@ -1,5 +1,6 @@
 import { prisma } from "../../service/prisma";
 import { IRide } from "../../interfaces/";
+import { InviteStatus } from "@prisma/client";
 
 const findUserRideOn = async (id: number) => {
   return await prisma.ride.findFirst({
@@ -48,18 +49,44 @@ const cancelRide = async (id: number) => {
 };
 
 const createRide = async (rideToBeIn: IRide) => {
-  return await prisma.ride.create({
-    data: {
-      ...rideToBeIn,
-      Room: {
-        create: {
-          invites: {
-            create: { status: "PASSANGER", userId: rideToBeIn.userId },
+  if (!rideToBeIn.userId) {
+    throw new Error("UserId é obrigatório.");
+  }
+
+  try {
+    const ride = await prisma.ride.create({
+      data: {
+        ...rideToBeIn,
+        Room: {
+          create: {
+            invites: {
+              create: {
+                status: InviteStatus.PASSANGER,
+                userId: rideToBeIn.userId,
+              },
+            },
           },
         },
       },
-    },
-  });
+      include: {
+        Room: {
+          include: {
+            invites: {
+              where: {
+                userId: rideToBeIn.userId,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    console.log("Ride criada com sucesso:", ride);
+    return ride;
+  } catch (error) {
+    console.error("Erro ao criar Ride:", error);
+    throw error;
+  }
 };
 
 export { findUserRideOn, createRide, cancelRide };
