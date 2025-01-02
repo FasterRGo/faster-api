@@ -89,4 +89,70 @@ const createRide = async (rideToBeIn: IRide) => {
   }
 };
 
-export { findUserRideOn, createRide, cancelRide };
+const acceptRide = async (driverId: number, rideId: number) => {
+  try {
+    const ride = await prisma.ride.update({
+      where: { id: rideId },
+      data: {
+        status: "ACCEPTED",
+        Room: {
+          update: {
+            invites: { create: { status: "DRIVER", driverId: driverId } },
+          },
+        },
+      },
+      include: {
+        Room: {
+          include: {
+            invites: {
+              where: {
+                driverId: driverId,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return ride;
+  } catch (error) {
+    console.error("Erro ao criar Ride:", error);
+    throw error;
+  }
+};
+
+const cancelDriverRide = async (driverId: number, rideId: number) => {
+  try {
+    await prisma.ride.update({
+      where: { id: rideId },
+      data: {
+        status: "REQUESTED",
+      },
+      include: { Room: true },
+    });
+
+    const ride = await prisma.ride.findUnique({
+      where: {
+        id: rideId,
+      },
+      include: { Room: true },
+    });
+
+    if (!ride || !ride.Room) {
+      return;
+    }
+
+    await prisma.invite.deleteMany({
+      where: {
+        AND: [{ roomId: ride.Room.id }, { driverId }],
+      },
+    });
+
+    return ride;
+  } catch (error) {
+    console.error("Erro ao criar Ride:", error);
+    throw error;
+  }
+};
+
+export { findUserRideOn, createRide, cancelRide, acceptRide, cancelDriverRide };
