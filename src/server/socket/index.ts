@@ -1,5 +1,10 @@
 import { Server } from "socket.io";
 import { prisma } from "../../service/prisma";
+import {
+  findInviteBySocketId,
+  updateInviteStatus,
+  updateSocketIdOfAInvite,
+} from "../../database/repositories/inviteRepository";
 
 interface RoomMessage {
   roomName: string;
@@ -8,6 +13,11 @@ interface RoomMessage {
 
 interface Connection {
   userId: number;
+  invite: number;
+}
+
+interface JoinRoom {
+  roomName: string;
   invite: number;
 }
 
@@ -26,6 +36,7 @@ export const webSocket = (httpServer: any) => {
       const room = await prisma.invite.findUnique({
         where: {
           id: invite,
+          User: { id: userId },
         },
         include: {
           Room: {
@@ -40,23 +51,23 @@ export const webSocket = (httpServer: any) => {
         },
       });
 
-      if (!room) {
-        console.log("no room");
+      if (room) {
+        socket.join(room.roomId);
+        console.log(`Usuário ${socket.id} entrou na sala ${room.id}`);
+
+        await updateSocketIdOfAInvite(invite, socket.id);
       }
-
-      console.log(room);
-
-      // console.log(`Usuário ${socket.id} entrou na sala ${room.id}`);
     });
 
-    socket.on("joinRoom", async (roomName: any) => {
+    socket.on("joinRoom", async (roomName: JoinRoom) => {
       if (!roomName) {
         return;
       }
 
       const room = await prisma.invite.findUnique({
         where: {
-          id: roomName.roomName,
+          id: roomName.invite,
+          Room: { id: roomName.roomName },
         },
       });
 
@@ -64,13 +75,14 @@ export const webSocket = (httpServer: any) => {
         console.log("no room");
       }
 
-      console.log(room);
-
       const obj = roomName;
 
-      console.log(`Usuário ${socket.id} entrou na sala ${obj.roomName}`);
+      await updateSocketIdOfAInvite(roomName.invite, socket.id);
+
+      if (room?.status !== "DRIVER" && room?.status !== "PASSENGER") {
+        await updateInviteStatus(roomName.invite, "IN_USE");
+      }
       socket.join(obj.roomName);
-      console.log(`Usuário ${socket.id} entrou na sala ${obj.roomName}`);
       socket
         .to(obj.roomName)
         .emit("message", `Usuário ${socket.id} entrou na sala.`);
@@ -82,17 +94,33 @@ export const webSocket = (httpServer: any) => {
       io.to(roomName).emit("message", `${socket.id}: ${message}`);
     });
 
-    socket.on("leaveRoom", (roomName: string) => {
-      console.log(socket);
+    socket.on("chat", (data: RoomMessage) => {
+      const { roomName, message } = data;
+
+      io.to(roomName).emit("message", `${socket.id}: ${message}`);
+    });
+
+    socket.on("leaveRoom", async (roomName: string) => {
       socket.leave(roomName);
       console.log(`Usuário ${socket.id} saiu da sala ${roomName}`);
       socket.to(roomName).emit("message", `Usuário ${socket.id} saiu da sala.`);
+      const invite = await findInviteBySocketId(socket.id);
+
+      if (invite) {
+        await updateInviteStatus(invite.id, "WATCHER_LEFT");
+      }
     });
 
     // Evento ao desconectar
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       console.log(socket);
       console.log(`Usuário desconectado: ${socket.id}`);
+
+      const invite = await findInviteBySocketId(socket.id);
+
+      if (invite) {
+        await updateInviteStatus(invite.id, "WATCHER_LEFT");
+      }
     });
 
     socket.on("connect_error", (err) => {

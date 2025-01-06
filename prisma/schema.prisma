@@ -22,8 +22,9 @@ enum InviteStatus {
   IN_USE
   REVOKED
   PENDING
-  PASSANGER
+  PASSENGER
   DRIVER
+  WATCHER_LEFT
 }
 
 model User {
@@ -133,10 +134,11 @@ model Car {
 model Invite {
   id       Int          @unique @default(autoincrement())
   status   InviteStatus
+  socketId String?
   userId   Int?
   driverId Int?
-  Room     Room?        @relation(fields: [roomId], references: [id])
-  roomId   String?
+  Room     Room         @relation(fields: [roomId], references: [id])
+  roomId   String
   User     User?        @relation(fields: [userId], references: [id])
   Driver   Driver?      @relation(fields: [driverId], references: [id])
 }

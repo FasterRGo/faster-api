@@ -61,7 +61,7 @@ const createRide = async (rideToBeIn: IRide) => {
           create: {
             invites: {
               create: {
-                status: InviteStatus.PASSANGER,
+                status: InviteStatus.PASSENGER,
                 userId: rideToBeIn.userId,
               },
             },
