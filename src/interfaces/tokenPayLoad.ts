@@ -1,5 +1,6 @@
 export interface TokenPayload {
-    id: number
-    iat: number
-    exp: number
+  email: string;
+  id: number;
+  iat: number;
+  exp: number;
 }

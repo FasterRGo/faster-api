@@ -2,7 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import { verify } from "jsonwebtoken";
 import { env } from "../environment";
 import { TokenPayload } from "../interfaces";
-import { findDriverById } from "../database/repositories/driverRepository";
+import {
+  findDriverById,
+  findDriverByIdAndEmail,
+} from "../database/repositories/driverRepository";
 
 async function driverMiddleWare(
   req: Request,
@@ -21,8 +24,8 @@ async function driverMiddleWare(
       throw new Error("Token não encontrado");
     }
     try {
-      const data = verify(token, AUTH_TOKEN as string) as TokenPayload;
-      const driver = await findDriverById(data.id);
+      const { id, email } = verify(token, AUTH_TOKEN as string) as TokenPayload;
+      const driver = await findDriverByIdAndEmail(id, email);
 
       if (!driver) {
         throw new Error("Usuário não encontrado");
