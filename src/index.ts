@@ -17,9 +17,3 @@ app.use(router);
 const httpServer = createServer(app);
 
 webSocket(httpServer);
-
-app.listen(3030, () => {
-  console.log("🔥 Running on Port 3030! 🔥");
-  console.log("http://localhost:3030");
-  console.log("wss://localhost:3030");
-});

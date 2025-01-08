@@ -21,8 +21,8 @@ interface JoinRoom {
   invite: number;
 }
 
-export const webSocket = (httpServer: any) => {
-  const io = new Server(httpServer, {
+export const webSocket = (app: any) => {
+  const io = new Server(app, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
@@ -128,7 +128,9 @@ export const webSocket = (httpServer: any) => {
     });
   });
 
-  httpServer.listen(3031, () => {
-    console.log(`Servidor rodando na porta ${3031}`);
+  app.listen(3030, () => {
+    console.log(
+      `Servidor rodando em http://localhost:${3030} e wss://localhost:${3030}`
+    );
   });
 };
