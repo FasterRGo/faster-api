@@ -37,14 +37,19 @@ class DriverSignInController {
       }
 
       const id = driver.id;
+      const driverEmail = driver.email;
 
-      const token = sign({ id }, AUTH_TOKEN as string, {
+      const token = sign({ id, email: driverEmail }, AUTH_TOKEN as string, {
         expiresIn: "1h",
       });
 
-      const refreshT = sign({ id }, REFRESH_TOKEN as string, {
-        expiresIn: "10h",
-      });
+      const refreshT = sign(
+        { id, email: driverEmail },
+        REFRESH_TOKEN as string,
+        {
+          expiresIn: "10h",
+        }
+      );
 
       return res
         .status(200)

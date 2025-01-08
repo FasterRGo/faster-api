@@ -3,25 +3,25 @@ import * as yup from "yup";
 const carValidator = yup.object().shape({
   model: yup
     .string()
-    .required("A latitude inicial é obrigatória")
-    .typeError("A latitude inicial deve ser um número"),
+    .required("O modelo é obrigatória")
+    .typeError("O modelo deve ser uma string"),
   plate: yup
     .string()
-    .required("A latitude inicial é obrigatória")
-    .typeError("A latitude inicial deve ser um número"),
+    .required("A placa é obrigatória")
+    .typeError("A placa deve ser uma string"),
 
   year: yup
     .string()
-    .required("A latitude inicial é obrigatória")
-    .typeError("A latitude inicial deve ser um número"),
+    .required("O ano é obrigatório")
+    .typeError("O ano deve ser um número"),
   chassi: yup
     .string()
-    .required("A latitude inicial é obrigatória")
-    .typeError("A latitude inicial deve ser um número"),
+    .required("O chassi é obrigatório")
+    .typeError("O chassi deve ser uma string"),
   brand: yup
     .string()
-    .required("A latitude inicial é obrigatória")
-    .typeError("A latitude inicial deve ser um número"),
+    .required("A marca é obrigatória")
+    .typeError("A marca deve ser um texto"),
 });
 
 export { carValidator };

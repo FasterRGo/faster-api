@@ -32,6 +32,19 @@ const findDriverById = async (id: number) => {
   });
 };
 
+const findDriverByIdAndEmail = async (id: number, email: string) => {
+  const { driver } = prisma;
+  return await driver.findUnique({
+    where: {
+      id,
+      email,
+    },
+    include: {
+      car: true,
+    },
+  });
+};
+
 const editDriver = async (driverToBeUpdated: DriverWith) => {
   const { driver } = prisma;
   return await driver.update({
@@ -44,4 +57,10 @@ const createDriver = async (driverToBeIN: IDriver) => {
   return await prisma.driver.create({ data: driverToBeIN });
 };
 
-export { findDriverByEmail, findDriverById, createDriver, editDriver };
+export {
+  findDriverByEmail,
+  findDriverById,
+  createDriver,
+  editDriver,
+  findDriverByIdAndEmail,
+};
