@@ -146,17 +146,24 @@ model Car {
   driver   Driver? @relation(fields: [driverId], references: [id])
 }
 
+enum Creation {
+  DRIVER
+  PASSENGER
+  SYSTEM
+}
+
 model Invite {
-  id       Int          @unique @default(autoincrement())
-  status   InviteStatus
-  email    String?
-  socketId String?
-  userId   Int?
-  driverId Int?
-  User     User?        @relation(fields: [userId], references: [id])
-  Driver   Driver?      @relation(fields: [driverId], references: [id])
-  roomId   String
-  Room     Room         @relation(fields: [roomId], references: [id])
+  id        Int          @unique @default(autoincrement())
+  status    InviteStatus
+  createdBy Creation     @default(SYSTEM)
+  email     String?
+  socketId  String?
+  userId    Int?
+  driverId  Int?
+  User      User?        @relation(fields: [userId], references: [id])
+  Driver    Driver?      @relation(fields: [driverId], references: [id])
+  roomId    String
+  Room      Room         @relation(fields: [roomId], references: [id])
 }
 
 model Room {

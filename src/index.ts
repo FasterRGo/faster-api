@@ -13,7 +13,6 @@ app.use(
 
 app.use(express.json());
 app.use(router);
-
 const httpServer = createServer(app);
 
 webSocket(httpServer);

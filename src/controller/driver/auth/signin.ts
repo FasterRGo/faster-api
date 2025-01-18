@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { sign } from "jsonwebtoken";
 import { findDriverByEmail } from "../../../database/repositories/driverRepository";
 import { env } from "../../../environment";
+import { getActiveRide } from "../../../database/repositories/rideRepository";
 
 class DriverSignInController {
   async execute(req: Request, res: Response) {
@@ -51,9 +52,16 @@ class DriverSignInController {
         }
       );
 
+      const ride = await getActiveRide({ driverId: driver.id });
+
       return res
         .status(200)
-        .json({ driver, accessToken: token, refreshToken: refreshT });
+        .json({
+          driver,
+          accessToken: token,
+          refreshToken: refreshT,
+          activeRide: ride,
+        });
     } catch (error: any) {
       return res.status(400).json({
         message: error.message,

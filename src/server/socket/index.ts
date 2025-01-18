@@ -88,10 +88,10 @@ export const webSocket = (app: any) => {
         .emit("message", `Usuário ${socket.id} entrou na sala.`);
     });
 
-    socket.on("sendMessage", (data: RoomMessage) => {
+    socket.on("updateLocation", (data: RoomMessage) => {
       const { roomName, message } = data;
 
-      io.to(roomName).emit("message", `${socket.id}: ${message}`);
+      io.to(roomName).emit("updateLocation", `${socket.id}: ${message}`);
     });
 
     socket.on("chat", (data: RoomMessage) => {

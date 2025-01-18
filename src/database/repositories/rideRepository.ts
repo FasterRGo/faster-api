@@ -21,26 +21,20 @@ const findUserRideOn = async (id: number) => {
   });
 };
 
-const cancelRide = async (id: number) => {
-  return await prisma.ride.updateMany({
+const cancelRide = async (id: string) => {
+  return await prisma.ride.update({
     where: {
-      AND: [
-        {
-          id,
-        },
-        {
-          NOT: [
-            {
-              OR: [
-                { status: "CANCELED" },
-                { status: "FINISHED" },
-                { status: "ACCEPTED" },
-                { status: "INITIALIZED" },
-              ],
-            },
+      id,
+      AND: {
+        NOT: {
+          OR: [
+            { status: "CANCELED" },
+            { status: "FINISHED" },
+            { status: "ACCEPTED" },
+            { status: "INITIALIZED" },
           ],
         },
-      ],
+      },
     },
     data: {
       status: "CANCELED",
@@ -57,39 +51,33 @@ const createRide = async (rideToBeIn: IRide) => {
     const ride = await prisma.ride.create({
       data: {
         ...rideToBeIn,
-        Room: {
-          create: {
-            invites: {
-              create: {
-                status: InviteStatus.PASSENGER,
-                userId: rideToBeIn.userId,
-              },
-            },
-          },
-        },
-      },
-      include: {
-        Room: {
-          include: {
-            invites: {
-              where: {
-                userId: rideToBeIn.userId,
-              },
-            },
-          },
-        },
       },
     });
 
+    const room = await prisma.room.create({
+      data: {
+        Ride: {
+          connect: { id: ride.id },
+        },
+        invites: { create: { status: "PASSENGER", userId: rideToBeIn.userId } },
+      },
+      include: { invites: true },
+    });
+
+    const updatedRide = await prisma.ride.update({
+      where: { id: ride.id },
+      data: { roomId: room.id },
+    });
+
     console.log("Ride criada com sucesso:", ride);
-    return ride;
+    return { ride: updatedRide, room };
   } catch (error) {
     console.error("Erro ao criar Ride:", error);
     throw error;
   }
 };
 
-const acceptRide = async (driverId: number, rideId: number) => {
+const acceptRide = async (driverId: number, rideId: string) => {
   try {
     const ride = await prisma.ride.update({
       where: { id: rideId },
@@ -121,7 +109,7 @@ const acceptRide = async (driverId: number, rideId: number) => {
   }
 };
 
-const cancelDriverRide = async (driverId: number, rideId: number) => {
+const cancelDriverRide = async (driverId: number, rideId: string) => {
   try {
     await prisma.ride.update({
       where: { id: rideId },
@@ -155,4 +143,60 @@ const cancelDriverRide = async (driverId: number, rideId: number) => {
   }
 };
 
-export { findUserRideOn, createRide, cancelRide, acceptRide, cancelDriverRide };
+const finishRide = async (rideId: string) => {
+  await prisma.ride.update({
+    where: { id: rideId },
+    data: {
+      status: "FINISHED",
+      Room: {
+        update: {
+          active: false,
+        },
+      },
+    },
+  });
+};
+
+const getActiveRide = async ({
+  userId,
+  driverId,
+}: {
+  userId?: number;
+  driverId?: number;
+}) => {
+  if (!userId && !driverId) {
+    throw new Error("No id informed");
+  }
+
+  return await prisma.invite.findFirst({
+    where: {
+      ...(userId && { userId }),
+      ...(driverId && { driverId }),
+      AND: [
+        {
+          Room: {
+            Ride: {
+              OR: [
+                {
+                  status: "REQUESTED",
+                },
+                { status: "ACCEPTED" },
+                { status: "INITIALIZED" },
+              ],
+            },
+          },
+        },
+      ],
+    },
+  });
+};
+
+export {
+  findUserRideOn,
+  createRide,
+  cancelRide,
+  acceptRide,
+  cancelDriverRide,
+  finishRide,
+  getActiveRide,
+};

@@ -17,7 +17,7 @@ class CancelDriverRideController {
 
       const ride = await prisma.ride.findUnique({
         where: {
-          id: Number(rideId),
+          id: rideId as string,
         },
       });
 
