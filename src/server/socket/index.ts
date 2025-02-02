@@ -59,20 +59,45 @@ export const webSocket = (app: any) => {
       }
     });
 
+    socket.on("acceptRide", async (room: JoinRoom) => {
+      // O motorista entra na sala
+      socket.join(room.roomName);
+
+      // Atualiza o status do convite para indicar que o motorista aceitou a corrida
+      await updateInviteStatus(room.invite, "DRIVER");
+
+      // Notifica todos na sala que o motorista entrou
+      socket.to(room.roomName).emit("driverJoined", {
+        driverId: socket.id,
+        invite: room.invite,
+      });
+
+      console.log(
+        `Motorista ${socket.id} aceitou a corrida na sala ${room.roomName}`
+      );
+    });
+
     socket.on("joinRoom", async (roomName: JoinRoom) => {
       if (!roomName) {
         return;
       }
 
-      const room = await prisma.invite.findUnique({
-        where: {
-          id: roomName.invite,
-          Room: { id: roomName.roomName },
-        },
-      });
+      var room;
+      if (roomName.roomName !== "obj.roomName") {
+        room = await prisma.invite.findUnique({
+          where: {
+            id: roomName.invite,
+            Room: { id: roomName.roomName },
+          },
+        });
+      }
 
       if (!room) {
-        console.log("no room");
+        socket.join(`obj.roomName`);
+        socket
+          .to(`obj.roomName`)
+          .emit("message", `Usuário ${socket.id} entrou na sala.`);
+        return;
       }
 
       const obj = roomName;
@@ -97,6 +122,12 @@ export const webSocket = (app: any) => {
     socket.on("chat", (data: RoomMessage) => {
       const { roomName, message } = data;
 
+      io.to(roomName).emit("chat", `${socket.id}: ${message}`);
+    });
+
+    socket.on("message", (data: RoomMessage) => {
+      const { roomName, message } = data;
+
       io.to(roomName).emit("message", `${socket.id}: ${message}`);
     });
 
@@ -113,7 +144,6 @@ export const webSocket = (app: any) => {
 
     // Evento ao desconectar
     socket.on("disconnect", async () => {
-      console.log(socket);
       console.log(`Usuário desconectado: ${socket.id}`);
 
       const invite = await findInviteBySocketId(socket.id);
@@ -133,4 +163,6 @@ export const webSocket = (app: any) => {
       `Servidor rodando em http://localhost:${3030} e wss://localhost:${3030}`
     );
   });
+
+  return io;
 };

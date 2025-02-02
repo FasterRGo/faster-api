@@ -12,7 +12,7 @@ interface ICalculate {
 
 import { env } from "../environment";
 
-const RATE_PER_RIDE = 2.3;
+const RATE_PER_RIDE = 9.2;
 const { ORS_API_KEY } = env;
 
 const calculate = async ({ from, to }: ICalculate) => {
@@ -35,7 +35,6 @@ const calculate = async ({ from, to }: ICalculate) => {
 
   const route = data.features[0].properties.segments[0];
   const distanceInKm = route.distance / 1000;
-  console.log(distanceInKm);
   const costInReais = Number((distanceInKm * RATE_PER_RIDE).toFixed(2));
 
   return { ...route, price: costInReais };

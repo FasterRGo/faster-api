@@ -27,8 +27,9 @@ class CalculateRideController {
         city: route.city,
       });
     } catch (error: any) {
-      return res.json({
+      return res.status(error?.response?.status | error.status | 400).json({
         message: error.message,
+        // detail: error.response.data,
       });
     }
   }

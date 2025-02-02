@@ -69,7 +69,6 @@ const createRide = async (rideToBeIn: IRide) => {
       data: { roomId: room.id },
     });
 
-    console.log("Ride criada com sucesso:", ride);
     return { ride: updatedRide, room };
   } catch (error) {
     console.error("Erro ao criar Ride:", error);
@@ -188,6 +187,37 @@ const getActiveRide = async ({
         },
       ],
     },
+    include: { Room: { include: { Ride: true } } },
+  });
+};
+
+const cancelOlderThan7MinutesRide = async (io: any) => {
+  const sevenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+
+  const ridesToCancel = await prisma.ride.findMany({
+    where: {
+      status: "REQUESTED",
+      createdAt: { lte: sevenMinutesAgo },
+    },
+    select: {
+      id: true,
+      roomId: true,
+    },
+  });
+
+  if (ridesToCancel.length === 0) return;
+
+  await prisma.ride.updateMany({
+    where: {
+      id: { in: ridesToCancel.map((ride) => ride.id) },
+    },
+    data: { status: "CANCELED" },
+  });
+
+  ridesToCancel.forEach((ride) => {
+    io.to(ride.roomId).emit("rideCancelled", {
+      message: "Esta corrida foi cancelada por inatividade.",
+    });
   });
 };
 
@@ -199,4 +229,5 @@ export {
   cancelDriverRide,
   finishRide,
   getActiveRide,
+  cancelOlderThan7MinutesRide,
 };

@@ -41,8 +41,6 @@ class UserSignInController {
 
       const activeRide = await getActiveRide({ userId: id });
 
-      console.log(activeRide);
-
       return res
         .status(200)
         .json({ user, accessToken: token, refreshToken: refreshT, activeRide });
