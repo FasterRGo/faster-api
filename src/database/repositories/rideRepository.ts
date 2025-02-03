@@ -22,19 +22,10 @@ const findUserRideOn = async (id: number) => {
 };
 
 const cancelRide = async (id: string) => {
+  console.log(id);
   return await prisma.ride.update({
     where: {
       id,
-      AND: {
-        NOT: {
-          OR: [
-            { status: "CANCELED" },
-            { status: "FINISHED" },
-            { status: "ACCEPTED" },
-            { status: "INITIALIZED" },
-          ],
-        },
-      },
     },
     data: {
       status: "CANCELED",
@@ -192,7 +183,7 @@ const getActiveRide = async ({
 };
 
 const cancelOlderThan7MinutesRide = async (io: any) => {
-  const sevenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+  const sevenMinutesAgo = new Date(Date.now() - 7 * 60 * 1000);
 
   const ridesToCancel = await prisma.ride.findMany({
     where: {

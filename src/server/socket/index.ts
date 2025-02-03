@@ -60,17 +60,13 @@ export const webSocket = (app: any) => {
     });
 
     socket.on("acceptRide", async (room: JoinRoom) => {
-      // O motorista entra na sala
-      socket.join(room.roomName);
-
       // Atualiza o status do convite para indicar que o motorista aceitou a corrida
       await updateInviteStatus(room.invite, "DRIVER");
 
-      // Notifica todos na sala que o motorista entrou
-      socket.to(room.roomName).emit("driverJoined", {
-        driverId: socket.id,
-        invite: room.invite,
-      });
+      socket.join(room.roomName);
+      socket
+        .to(room.roomName)
+        .emit("driverJoined", `Usuário ${socket.id} entrou na sala.`);
 
       console.log(
         `Motorista ${socket.id} aceitou a corrida na sala ${room.roomName}`
