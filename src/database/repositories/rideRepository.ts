@@ -212,6 +212,49 @@ const cancelOlderThan7MinutesRide = async (io: any) => {
   });
 };
 
+async function offerRides(socket: any) {
+  try {
+    // Buscar motoristas disponíveis
+    const drivers = await prisma.driver.findMany({
+      where: { isWorking: true, socketId: { not: null } },
+    });
+
+    // Buscar corridas com status 'Requested'
+    const rides = await prisma.ride.findMany({
+      where: { status: "REQUESTED" },
+      take: drivers.length,
+      include: { User: true },
+    });
+
+    if (rides.length === 0 || drivers.length === 0) {
+      console.log("Nenhuma corrida ou motorista disponível no momento.");
+      return;
+    }
+
+    // Emitir evento para os motoristas
+    for (let i = 0; i < Math.min(drivers.length, rides.length); i++) {
+      const driver = drivers[i];
+      const ride = rides[i];
+
+      socket.to(driver.socketId).emit("mightRide", {
+        driverId: driver.id,
+        rideId: ride.id,
+        initialLatitude: ride.initialLatitudeLocation,
+        initialLongitude: ride.initialLongitudeLocation,
+        destinationLatitude: ride.finalLatitudeLocation,
+        destinationLongitude: ride.finalLongitudeLocation,
+        passengerName: ride.User.name,
+      });
+
+      console.log(
+        `Oferta enviada para motorista ${driver.id} sobre a corrida ${ride.id}`
+      );
+    }
+  } catch (error) {
+    console.error("Erro ao oferecer corridas:", error);
+  }
+}
+
 export {
   findUserRideOn,
   createRide,
@@ -221,4 +264,5 @@ export {
   finishRide,
   getActiveRide,
   cancelOlderThan7MinutesRide,
+  offerRides,
 };

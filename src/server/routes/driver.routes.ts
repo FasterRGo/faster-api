@@ -7,12 +7,14 @@ import { driverMiddleWare } from "../../middleware/driverMiddleware";
 import { AcceptRideController } from "../../controller/driver/ride/accept";
 import { CancelDriverRideController } from "../../controller/driver/ride/cancel";
 import { FinishRideController } from "../../controller/driver/ride/finish";
+import { ListenerRideController } from "../../controller/driver/ride/getReady";
 
 const getDriver = new GetDriverController();
 const editDriver = new EditDriverController();
 const accept = new AcceptRideController();
 const cancel = new CancelDriverRideController();
 const finish = new FinishRideController();
+const listener = new ListenerRideController();
 
 const driverRoutes = (router: Router): void => {
   router.get(
@@ -39,6 +41,12 @@ const driverRoutes = (router: Router): void => {
     "/driver/ride/:rideId/finish",
     driverMiddleWare,
     finish.execute.bind(FinishRideController)
+  );
+
+  router.post(
+    "/driver/ride/ready",
+    driverMiddleWare,
+    listener.execute.bind(ListenerRideController)
   );
 };
 
