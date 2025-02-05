@@ -60,9 +60,6 @@ export const webSocket = (app: any) => {
     });
 
     socket.on("acceptRide", async (room: JoinRoom) => {
-      // Atualiza o status do convite para indicar que o motorista aceitou a corrida
-      await updateInviteStatus(room.invite, "DRIVER");
-
       socket.join(room.roomName);
       socket
         .to(room.roomName)
@@ -78,15 +75,12 @@ export const webSocket = (app: any) => {
         return;
       }
 
-      var room;
-      if (roomName.roomName !== "obj.roomName") {
-        room = await prisma.invite.findUnique({
-          where: {
-            id: roomName.invite,
-            Room: { id: roomName.roomName },
-          },
-        });
-      }
+      const room = await prisma.invite.findUnique({
+        where: {
+          id: roomName.invite,
+          Room: { id: roomName.roomName },
+        },
+      });
 
       if (!room) {
         socket.join(`obj.roomName`);
@@ -103,6 +97,7 @@ export const webSocket = (app: any) => {
       if (room?.status !== "DRIVER" && room?.status !== "PASSENGER") {
         await updateInviteStatus(roomName.invite, "IN_USE");
       }
+
       socket.join(obj.roomName);
       socket
         .to(obj.roomName)
@@ -110,9 +105,8 @@ export const webSocket = (app: any) => {
     });
 
     socket.on("updateLocation", (data: RoomMessage) => {
-      const { roomName, message } = data;
-
-      io.to(roomName).emit("updateLocation", `${socket.id}: ${message}`);
+      const { roomName } = data;
+      io.to(roomName).emit("updateLocation", data);
     });
 
     socket.on("chat", (data: RoomMessage) => {

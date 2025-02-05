@@ -27,7 +27,7 @@ cron.schedule("* * * * *", async () => {
   await cancelOlderThan7MinutesRide(io);
 });
 
-cron.schedule("*/20 * * * * *", async () => {
+cron.schedule("*/05 * * * * *", async () => {
   console.log("Running RIDE cron every 20 seconds");
   await offerRides(io);
 });

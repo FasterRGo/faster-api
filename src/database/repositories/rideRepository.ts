@@ -237,13 +237,13 @@ async function offerRides(socket: any) {
       const ride = rides[i];
 
       socket.to(driver.socketId).emit("mightRide", {
-        driverId: driver.id,
         rideId: ride.id,
         initialLatitude: ride.initialLatitudeLocation,
         initialLongitude: ride.initialLongitudeLocation,
         destinationLatitude: ride.finalLatitudeLocation,
         destinationLongitude: ride.finalLongitudeLocation,
         passengerName: ride.User.name,
+        price: ride.price,
       });
 
       console.log(

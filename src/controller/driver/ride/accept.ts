@@ -34,6 +34,11 @@ class AcceptRideController {
         });
       }
 
+      await prisma.driver.update({
+        where: { id: req.userId },
+        data: { isWorking: false },
+      });
+
       const rideUpdated = await acceptRide(req.userId, ride.id);
       return res.status(200).json({ ride: rideUpdated, status: "ACCEPTED" });
     } catch (error: any) {
