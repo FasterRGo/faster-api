@@ -243,6 +243,7 @@ async function offerRides(socket: any) {
         destinationLatitude: ride.finalLatitudeLocation,
         destinationLongitude: ride.finalLongitudeLocation,
         passengerName: ride.User.name,
+        roomId: ride.roomId,
         price: ride.price,
       });
 

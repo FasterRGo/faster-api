@@ -17,7 +17,7 @@ socket.on("connect", () => {
   console.log("✅ Conectado ao servidor WebSocket!");
 
   const data = {
-    roomName: "5330331f-9481-4e55-802c-18b497713dca",
+    roomName: "8f7835c3-fd53-49d5-a01a-d42ab9e8605e",
     invite: 138,
     message: "Tranquilo?",
     location: locations[index],

@@ -107,6 +107,7 @@ export const webSocket = (app: any) => {
 
     socket.on("updateLocation", (data: RoomMessage) => {
       const { roomName } = data;
+      console.log(data);
       io.to(roomName).emit("updateLocation", data);
     });
 
