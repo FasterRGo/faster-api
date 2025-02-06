@@ -61,9 +61,10 @@ export const webSocket = (app: any) => {
 
     socket.on("acceptRide", async (room: JoinRoom) => {
       socket.join(room.roomName);
-      socket
-        .to(room.roomName)
-        .emit("driverJoined", `Usuário ${socket.id} entrou na sala.`);
+      io.to(room.roomName).emit(
+        "driverJoined",
+        `Usuário ${socket.id} entrou na sala.`
+      );
 
       console.log(
         `Motorista ${socket.id} aceitou a corrida na sala ${room.roomName}`

@@ -23,11 +23,11 @@ const httpServer = createServer(app);
 const io = webSocket(httpServer);
 
 cron.schedule("* * * * *", async () => {
-  console.log("Running cron");
+  // console.log("Running cron");
   await cancelOlderThan7MinutesRide(io);
 });
 
 cron.schedule("*/05 * * * * *", async () => {
-  console.log("Running RIDE cron every 20 seconds");
+  // console.log("Running RIDE cron every 20 seconds");
   await offerRides(io);
 });
