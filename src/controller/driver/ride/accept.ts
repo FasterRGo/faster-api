@@ -34,6 +34,13 @@ class AcceptRideController {
         });
       }
 
+      await prisma.ride.update({
+        where: {
+          id: ride.id,
+        },
+        data: { driverId: req.userId },
+      });
+
       await prisma.driver.update({
         where: { id: req.userId },
         data: { isWorking: false },
