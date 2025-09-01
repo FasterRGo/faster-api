@@ -33,18 +33,21 @@ enum CommentedBy {
 }
 
 model User {
-  id             Int              @id @default(autoincrement())
-  name           String
-  email          String           @unique
-  password       String
-  phoneNumber    String           @unique
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  ride           Ride[]
-  CommonPlaces   CommonPlaces[]
-  FavoriteDriver FavoriteDriver[]
-  PaymentMethod  PaymentMethod[]
-  Invites        Invite[]
+  id              Int                      @id @default(autoincrement())
+  name            String
+  email           String                   @unique
+  password        String
+  phoneNumber     String                   @unique
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  ride            Ride[]
+  CommonPlaces    CommonPlaces[]
+  FavoriteDriver  FavoriteDriver[]
+  PaymentMethod   PaymentMethod[]
+  Invites         Invite[]
+  scheduledRides  ScheduledRidePassenger[]
+  ScheduledRide   ScheduledRide?           @relation(fields: [scheduledRideId], references: [id])
+  scheduledRideId String?
 }
 
 model Rate {
@@ -54,7 +57,9 @@ model Rate {
   description String?
   commentedBy CommentedBy
 
-  Ride Ride @relation(fields: [rideId], references: [id])
+  Ride            Ride           @relation(fields: [rideId], references: [id])
+  ScheduledRide   ScheduledRide? @relation(fields: [scheduledRideId], references: [id])
+  scheduledRideId String?
 }
 
 model Ride {
@@ -74,6 +79,40 @@ model Ride {
   Driver                   Driver?    @relation(fields: [driverId], references: [id])
   Rate                     Rate[]
   Room                     Room?      @relation(fields: [roomId], references: [id])
+}
+
+model ScheduledRide {
+  id                       String                   @id @default(uuid())
+  driverId                 Int
+  initialLatitudeLocation  Float
+  initialLongitudeLocation Float
+  finalLatitudeLocation    Float
+  finalLongitudeLocation   Float
+  originCity               String
+  destinationCity          String
+  price                    Float
+  scheduledDate            String
+  maxPassengers            Int                      @default(1)
+  createdAt                DateTime                 @default(now())
+  updatedAt                DateTime                 @updatedAt
+  status                   String
+  Rate                     Rate[]
+  ScheduledRidePassenger   ScheduledRidePassenger[]
+  User                     User[]
+  Driver                   Driver                   @relation(fields: [driverId], references: [id])
+  Room                     Room[]
+}
+
+model ScheduledRidePassenger {
+  id              String @id @default(uuid())
+  scheduledRideId String
+  userId          Int
+  status          String
+
+  scheduledRide ScheduledRide @relation(fields: [scheduledRideId], references: [id], onDelete: Cascade)
+  User          User          @relation(fields: [userId], references: [id])
+
+  @@unique([scheduledRideId, userId])
 }
 
 model DefaultPaymentMethod {
@@ -135,6 +174,7 @@ model Driver {
   ride           Ride[]
   FavoriteDriver FavoriteDriver[]
   Invite         Invite[]
+  ScheduledRide  ScheduledRide[]
 }
 
 model Car {
@@ -169,8 +209,10 @@ model Invite {
 }
 
 model Room {
-  id      String   @id @default(uuid()) // Id numérico para alinhar com Ride
-  active  Boolean  @default(true)
-  invites Invite[]
-  Ride    Ride?
+  id              String         @id @default(uuid()) // Id numérico para alinhar com Ride
+  active          Boolean        @default(true)
+  invites         Invite[]
+  Ride            Ride?
+  ScheduledRide   ScheduledRide? @relation(fields: [scheduledRideId], references: [id])
+  scheduledRideId String?
 }

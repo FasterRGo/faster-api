@@ -5,7 +5,7 @@ import {
   findUserRideOn,
 } from "../../database/repositories/rideRepository";
 import { rideValidator } from "../../utils/formValidator/rideValidator";
-import { calculate } from "../../service/calculateDistance";
+import { calculate } from "../../service/rideInfo";
 
 class CreateRideController {
   async execute(req: Request, res: Response) {

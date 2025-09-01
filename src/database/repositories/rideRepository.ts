@@ -1,6 +1,7 @@
 import { prisma } from "../../service/prisma";
 import { IRide } from "../../interfaces/";
 import { InviteStatus } from "@prisma/client";
+import { IRideSchedule } from "../../interfaces/rideSchedule";
 
 const findUserRideOn = async (id: number) => {
   return await prisma.ride.findFirst({
@@ -61,6 +62,27 @@ const createRide = async (rideToBeIn: IRide) => {
     });
 
     return { ride: updatedRide, room };
+  } catch (error) {
+    console.error("Erro ao criar Ride:", error);
+    throw error;
+  }
+};
+
+const createScheduledRide = async (rideToBeIn: IRideSchedule) => {
+  if (!rideToBeIn.driverId) {
+    throw new Error("UserId é obrigatório.");
+  }
+
+  try {
+    const ride = await prisma.scheduledRide.create({
+      data: {
+        ...rideToBeIn,
+        status: "CREATED",
+        maxPassengers: rideToBeIn.maxPassengers,
+      },
+    });
+
+    return { ride };
   } catch (error) {
     console.error("Erro ao criar Ride:", error);
     throw error;
@@ -256,6 +278,44 @@ async function offerRides(socket: any) {
   }
 }
 
+const joinScheduledRide = async (scheduledRideId: string, userId: number) => {
+  try {
+    const scheduledRide = await prisma.scheduledRide.findUnique({
+      where: { id: scheduledRideId },
+      include: { ScheduledRidePassenger: true },
+    });
+
+    if (!scheduledRide) {
+      throw new Error("Corrida agendada não encontrada.");
+    }
+
+    if (scheduledRide.ScheduledRidePassenger.length >= scheduledRide.maxPassengers) {
+      throw new Error("Limite de passageiros atingido para esta corrida agendada.");
+    }
+
+    const existingPassenger = scheduledRide.ScheduledRidePassenger.find(
+      (passenger) => passenger.userId === userId
+    );
+
+    if (existingPassenger) {
+      throw new Error("Você já está participando desta corrida agendada.");
+    }
+
+    const scheduledRidePassenger = await prisma.scheduledRidePassenger.create({
+      data: {
+        scheduledRideId,
+        userId,
+        status: "CONFIRMED", // Ou um status inicial apropriado
+      },
+    });
+
+    return scheduledRidePassenger;
+  } catch (error) {
+    console.error("Erro ao entrar na corrida agendada:", error);
+    throw error;
+  }
+};
+
 export {
   findUserRideOn,
   createRide,
@@ -266,4 +326,6 @@ export {
   getActiveRide,
   cancelOlderThan7MinutesRide,
   offerRides,
+  createScheduledRide,
+  joinScheduledRide,
 };

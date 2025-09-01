@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { calculate } from "../../service/calculateDistance";
+import { calculate } from "../../service/rideInfo";
 import { findUserRideOn } from "../../database/repositories/rideRepository";
 
 class CalculateRideController {
