@@ -7,6 +7,7 @@ import { cardRoutes } from "./card.routes";
 import { driverRoutes } from "./driver.routes";
 import { driverAuthRoutes } from "./driverAuth.routes";
 import { carRoutes } from "./car.routes";
+import { scheduledRideRoutes } from "./scheduledRide.routes";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ cardRoutes(router);
 driverRoutes(router);
 driverAuthRoutes(router);
 carRoutes(router);
+scheduledRideRoutes(router);
 
 export { router };
