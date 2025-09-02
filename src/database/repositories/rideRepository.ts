@@ -79,6 +79,8 @@ const createScheduledRide = async (rideToBeIn: IRideSchedule) => {
         ...rideToBeIn,
         status: "CREATED",
         maxPassengers: rideToBeIn.maxPassengers,
+        originLabel: rideToBeIn.originLabel,
+        destinationLabel: rideToBeIn.destinationLabel,
       },
     });
 
@@ -289,8 +291,12 @@ const joinScheduledRide = async (scheduledRideId: string, userId: number) => {
       throw new Error("Corrida agendada não encontrada.");
     }
 
-    if (scheduledRide.ScheduledRidePassenger.length >= scheduledRide.maxPassengers) {
-      throw new Error("Limite de passageiros atingido para esta corrida agendada.");
+    if (
+      scheduledRide.ScheduledRidePassenger.length >= scheduledRide.maxPassengers
+    ) {
+      throw new Error(
+        "Limite de passageiros atingido para esta corrida agendada."
+      );
     }
 
     const existingPassenger = scheduledRide.ScheduledRidePassenger.find(

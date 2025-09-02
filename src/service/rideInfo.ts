@@ -41,16 +41,9 @@ const calculate = async ({ from, to }: ICalculate) => {
 };
 
 const getCityName = async (lat: number, lon: number) => {
+  console.log(lat, lon);
   const { data } = await axios.get(
-    "https://api.openrouteservice.org/geocode/reverse",
-    {
-      params: {
-        api_key: ORS_API_KEY,
-        point_lat: lat,
-        point_lng: lon,
-        size: 1,
-      },
-    }
+    `https://api.openrouteservice.org/geocode/reverse?api_key=${ORS_API_KEY}&point.lon=${lon}&point.lat=${lat}&size=1`
   );
 
   const place = data.features[0]?.properties;

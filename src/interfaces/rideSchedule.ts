@@ -10,4 +10,6 @@ export interface IRideSchedule {
   destinationCity: string;
   scheduledDate: string;
   maxPassengers: number;
+  destinationLabel: string;
+  originLabel: string;
 }

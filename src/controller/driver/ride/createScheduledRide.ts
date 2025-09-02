@@ -11,9 +11,8 @@ import { scheduleRideValidator } from "../../../utils/formValidator/rideSchedule
 class CreateScheduledRideController {
   async execute(req: Request, res: Response) {
     try {
-      const { from, to, scheduledDate, maxPassengers } = await scheduleRideValidator.validate(
-        req.body
-      );
+      const { from, to, scheduledDate, maxPassengers } =
+        await scheduleRideValidator.validate(req.body);
       const { userId } = req;
       const userHasRideOn = await findUserRideOn(userId);
 
@@ -26,20 +25,20 @@ class CreateScheduledRideController {
         to,
       });
 
-      const { city: originCity } = await getCityName(
+      const { city: originCity, label: originLabel } = await getCityName(
         from.latitude,
         from.longitude
       );
-      const { city: destinationCity } = await getCityName(
-        to.latitude,
-        to.longitude
-      );
+      const { city: destinationCity, label: destinationLabel } =
+        await getCityName(to.latitude, to.longitude);
 
       const ride = await createScheduledRide({
         finalLatitudeLocation: to.latitude,
         finalLongitudeLocation: to.longitude,
         initialLatitudeLocation: from.latitude,
         initialLongitudeLocation: from.longitude,
+        destinationLabel,
+        originLabel,
         price,
         driverId: userId,
         destinationCity,

@@ -90,6 +90,8 @@ model ScheduledRide {
   finalLongitudeLocation   Float
   originCity               String
   destinationCity          String
+  originLabel              String?
+  destinationLabel         String?
   price                    Float
   scheduledDate            String
   maxPassengers            Int                      @default(1)
