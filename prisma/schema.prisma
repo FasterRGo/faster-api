@@ -172,6 +172,7 @@ model Driver {
   updatedAt      DateTime         @updatedAt
   isWorking      Boolean          @default(false)
   socketId       String?
+  photo          String?
   car            Car[]
   ride           Ride[]
   FavoriteDriver FavoriteDriver[]

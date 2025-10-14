@@ -1,6 +1,6 @@
 import { prisma } from "../../service/prisma";
 import { IRide } from "../../interfaces/";
-import { InviteStatus } from "@prisma/client";
+import { InviteStatus, Prisma } from "@prisma/client";
 
 const findUserRideOn = async (id: number) => {
   return await prisma.ride.findFirst({
@@ -31,6 +31,10 @@ const cancelRide = async (id: string) => {
       status: "CANCELED",
     },
   });
+};
+
+const getAllRides = async () => {
+  return await prisma.scheduledRide.findMany();
 };
 
 const createRide = async (rideToBeIn: IRide) => {
@@ -256,6 +260,143 @@ async function offerRides(socket: any) {
   }
 }
 
+type FindNearestScheduledParams = {
+  fromLatitude: number;
+  fromLongitude: number;
+  toLatitude: number;
+  toLongitude: number;
+  maxDistanceKm?: number; // optional radial filter per endpoint
+  limit?: number;
+};
+
+const findNearestScheduledRides = async ({
+  fromLatitude,
+  fromLongitude,
+  toLatitude,
+  toLongitude,
+  maxDistanceKm = 50,
+  limit = 20,
+}: FindNearestScheduledParams) => {
+  const sql = Prisma.sql`
+    SELECT
+      sr.*,
+      d.id AS driver_id,
+      d.name AS driver_name,
+      d.email AS driver_email,
+      d.photo AS driver_photo,
+      d."phoneNumber" AS driver_phone_number,
+      (
+        6371 * acos(
+          cos(radians(${fromLatitude})) * cos(radians(sr."initialLatitudeLocation")) *
+          cos(radians(sr."initialLongitudeLocation") - radians(${fromLongitude})) +
+          sin(radians(${fromLatitude})) * sin(radians(sr."initialLatitudeLocation"))
+        )
+      ) AS initial_distance_km,
+      (
+        6371 * acos(
+          cos(radians(${toLatitude})) * cos(radians(sr."finalLatitudeLocation")) *
+          cos(radians(sr."finalLongitudeLocation") - radians(${toLongitude})) +
+          sin(radians(${toLatitude})) * sin(radians(sr."finalLatitudeLocation"))
+        )
+      ) AS destination_distance_km,
+      (
+        (
+          6371 * acos(
+            cos(radians(${fromLatitude})) * cos(radians(sr."initialLatitudeLocation")) *
+            cos(radians(sr."initialLongitudeLocation") - radians(${fromLongitude})) +
+            sin(radians(${fromLatitude})) * sin(radians(sr."initialLatitudeLocation"))
+          )
+        ) + (
+          6371 * acos(
+            cos(radians(${toLatitude})) * cos(radians(sr."finalLatitudeLocation")) *
+            cos(radians(sr."finalLongitudeLocation") - radians(${toLongitude})) +
+            sin(radians(${toLatitude})) * sin(radians(sr."finalLatitudeLocation"))
+          )
+        )
+      ) AS total_distance_km
+    FROM "ScheduledRide" sr
+    LEFT JOIN "Driver" d ON d.id = sr."driverId"
+    WHERE
+      sr.status IN ('CREATED', 'OPEN', 'AVAILABLE')
+      AND (
+        6371 * acos(
+          cos(radians(${fromLatitude})) * cos(radians(sr."initialLatitudeLocation")) *
+          cos(radians(sr."initialLongitudeLocation") - radians(${fromLongitude})) +
+          sin(radians(${fromLatitude})) * sin(radians(sr."initialLatitudeLocation"))
+        )
+      ) <= ${maxDistanceKm}
+      AND (
+        6371 * acos(
+          cos(radians(${toLatitude})) * cos(radians(sr."finalLatitudeLocation")) *
+          cos(radians(sr."finalLongitudeLocation") - radians(${toLongitude})) +
+          sin(radians(${toLatitude})) * sin(radians(sr."finalLatitudeLocation"))
+        )
+      ) <= ${maxDistanceKm}
+    ORDER BY total_distance_km ASC
+    LIMIT ${limit}
+  `;
+
+  const rows = await prisma.$queryRaw<any[]>(sql);
+
+  const results = rows.map((r) => ({
+    ...r,
+    driver: {
+      id: r.driver_id,
+      name: r.driver_name,
+      email: r.driver_email,
+      phoneNumber: r.driver_phone_number,
+    },
+  }));
+
+  return results;
+};
+
+type FindByCitiesParams = {
+  originCity: string;
+  destinationCity: string;
+  limit?: number;
+};
+
+const findScheduledRidesByCities = async ({
+  originCity,
+  destinationCity,
+  limit = 50,
+}: FindByCitiesParams) => {
+  const rides = await prisma.scheduledRide.findMany({
+    where: {
+      status: { in: ["CREATED", "OPEN", "AVAILABLE"] },
+      originCity: { contains: originCity, mode: "insensitive" },
+      destinationCity: { contains: destinationCity, mode: "insensitive" },
+    },
+    include: {
+      Driver: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phoneNumber: true,
+          photo: true,
+        },
+      },
+      ScheduledRidePassenger: {
+        include: {
+          User: {
+            select: { id: true, name: true, email: true, phoneNumber: true },
+          },
+        },
+      },
+    },
+    take: limit,
+    orderBy: { createdAt: "asc" },
+  });
+
+  return (rides as any[]).map((r: any) => ({
+    ...r,
+    driver: r.Driver,
+    passengers: r.ScheduledRidePassenger.map((sp: any) => sp.User),
+  }));
+};
+
 export {
   findUserRideOn,
   createRide,
@@ -266,4 +407,7 @@ export {
   getActiveRide,
   cancelOlderThan7MinutesRide,
   offerRides,
+  findNearestScheduledRides,
+  getAllRides,
+  findScheduledRidesByCities,
 };
