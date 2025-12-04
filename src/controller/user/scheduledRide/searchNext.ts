@@ -21,6 +21,7 @@ class SearchNextRideController {
         destinationCity,
         originCity,
         limit,
+        userId: req.userId,
       });
 
       return res.status(200).json(rides);

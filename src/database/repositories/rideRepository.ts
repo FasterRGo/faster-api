@@ -280,7 +280,11 @@ async function offerRides(socket: any) {
   }
 }
 
-const joinScheduledRide = async (scheduledRideId: string, userId: number) => {
+const joinScheduledRide = async (
+  scheduledRideId: string,
+  userId: number,
+  numberOfSeatsBought: number
+) => {
   try {
     const scheduledRide = await prisma.scheduledRide.findUnique({
       where: { id: scheduledRideId },
@@ -311,6 +315,7 @@ const joinScheduledRide = async (scheduledRideId: string, userId: number) => {
       data: {
         scheduledRideId,
         userId,
+        numberOfSeatsBought,
         status: "CONFIRMED", // Ou um status inicial apropriado
       },
     });

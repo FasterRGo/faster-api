@@ -106,10 +106,11 @@ model ScheduledRide {
 }
 
 model ScheduledRidePassenger {
-  id              String @id @default(uuid())
-  scheduledRideId String
-  userId          Int
-  status          String
+  id                  String @id @default(uuid())
+  scheduledRideId     String
+  userId              Int
+  status              String
+  numberOfSeatsBought Int
 
   scheduledRide ScheduledRide @relation(fields: [scheduledRideId], references: [id], onDelete: Cascade)
   User          User          @relation(fields: [userId], references: [id])

@@ -18,7 +18,13 @@ const locationSchema = yup.object().shape({
 const scheduleRideValidator = yup.object().shape({
   from: locationSchema.required(),
   to: locationSchema.required(),
-  scheduledDate: yup.string().required("A data e hora agendada é obrigatória"),
+  scheduledDate: yup
+    .string()
+    .required("A data e hora agendada é obrigatória")
+    .matches(
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/,
+      "A data deve estar no formato YYYY-mm-DDTHH:mm:ssZ"
+    ),
   maxPassengers: yup
     .number()
     .integer("O número máximo de passageiros deve ser um número inteiro")

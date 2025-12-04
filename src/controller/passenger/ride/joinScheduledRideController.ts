@@ -7,14 +7,16 @@ const joinScheduledRideSchema = yup.object().shape({
     .string()
     .uuid("ID da corrida agendada inválido")
     .required("ID da corrida agendada é obrigatório"),
+  numberOfSeatsBought: yup
+    .number()
+    .required("O número de assentos comprados é obrigatório"),
 });
 
 class JoinScheduledRideController {
   async execute(req: Request, res: Response) {
     try {
-      const { scheduledRideId } = await joinScheduledRideSchema.validate(
-        req.body
-      );
+      const { scheduledRideId, numberOfSeatsBought } =
+        await joinScheduledRideSchema.validate(req.body);
       const { userId } = req;
 
       if (!userId) {
@@ -23,7 +25,8 @@ class JoinScheduledRideController {
 
       const scheduledRidePassenger = await joinScheduledRide(
         scheduledRideId,
-        userId
+        userId,
+        numberOfSeatsBought
       );
 
       return res.status(201).json(scheduledRidePassenger);

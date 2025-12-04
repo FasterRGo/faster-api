@@ -355,9 +355,11 @@ type FindByCitiesParams = {
   originCity: string;
   destinationCity: string;
   limit?: number;
+  userId: number;
 };
 
 const findScheduledRidesByCities = async ({
+  userId,
   originCity,
   destinationCity,
   limit = 50,
@@ -379,21 +381,20 @@ const findScheduledRidesByCities = async ({
         },
       },
       ScheduledRidePassenger: {
-        include: {
-          User: {
-            select: { id: true, name: true, email: true, phoneNumber: true },
-          },
-        },
+        select: { userId: true },
+      },
+      _count: {
+        select: { ScheduledRidePassenger: true },
       },
     },
     take: limit,
     orderBy: { createdAt: "asc" },
   });
 
-  return (rides as any[]).map((r: any) => ({
-    ...r,
-    driver: r.Driver,
-    passengers: r.ScheduledRidePassenger.map((sp: any) => sp.User),
+  // adiciona a flag `isPassenger`
+  return rides.map((ride) => ({
+    ...ride,
+    isPassenger: ride.ScheduledRidePassenger.some((p) => p.userId === userId),
   }));
 };
 

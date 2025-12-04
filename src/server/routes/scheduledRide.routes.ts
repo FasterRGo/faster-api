@@ -26,7 +26,11 @@ const scheduledRideRoutes = (router: Router) => {
 
   router.get("/scheduled-ride", getScheduledRideController.execute);
 
-  router.post("/scheduled-ride/search-next", searchNextRideController.execute);
+  router.post(
+    "/scheduled-ride/search-next",
+    userMiddleWare,
+    searchNextRideController.execute
+  );
 };
 
 export { scheduledRideRoutes };
