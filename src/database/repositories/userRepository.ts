@@ -33,4 +33,12 @@ const createUser = async (userToBeIN: IUser) => {
     return await prisma.user.create({ data: userToBeIN })
 }
 
-export { findUserByEmail, findUserById, createUser, editUser }
+const updateUserPhoto = async (userId: number, photoPath: string) => {
+    const { user } = prisma
+    return await user.update({
+        where: { id: userId },
+        data: { photo: photoPath }
+    })
+}
+
+export { findUserByEmail, findUserById, createUser, editUser, updateUserPhoto }

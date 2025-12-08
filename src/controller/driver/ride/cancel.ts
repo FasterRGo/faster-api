@@ -22,7 +22,13 @@ class CancelDriverRideController {
       });
 
       if (!ride) {
-        return res.status(404);
+        return res.status(404).json({ message: "Corrida não encontrada" });
+      }
+
+      if (ride.status === "FINISHED") {
+        return res.status(400).json({
+          message: "Não é possível cancelar uma corrida que já foi finalizada.",
+        });
       }
 
       const rideUpdated = await cancelDriverRide(req.userId, ride.id);

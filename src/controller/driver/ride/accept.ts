@@ -9,6 +9,7 @@ import {
 import { Driver } from "@prisma/client";
 import { prisma } from "../../../service/prisma";
 import { acceptRide } from "../../../database/repositories/rideRepository";
+import { io } from "../../../index";
 
 type DriverWithoutPasswordAndCreatedAt = Omit<Driver, "password" | "createdAt">;
 
@@ -47,6 +48,14 @@ class AcceptRideController {
       });
 
       const rideUpdated = await acceptRide(req.userId, ride.id);
+      
+      // Emite os dados do motorista via WebSocket para a sala
+      if (rideUpdated.Driver && ride.roomId) {
+        io.to(ride.roomId).emit("driverJoined", {
+          Driver: rideUpdated.Driver,
+        });
+      }
+      
       return res.status(200).json({ ride: rideUpdated, status: "ACCEPTED" });
     } catch (error: any) {
       return res.status(400).json({ message: error.message });

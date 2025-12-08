@@ -57,10 +57,19 @@ const createDriver = async (driverToBeIN: IDriver) => {
   return await prisma.driver.create({ data: driverToBeIN });
 };
 
+const updateDriverPhoto = async (driverId: number, photoPath: string) => {
+  const { driver } = prisma;
+  return await driver.update({
+    where: { id: driverId },
+    data: { photo: photoPath },
+  });
+};
+
 export {
   findDriverByEmail,
   findDriverById,
   createDriver,
   editDriver,
   findDriverByIdAndEmail,
+  updateDriverPhoto,
 };

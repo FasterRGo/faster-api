@@ -5,11 +5,21 @@ const socket = io("ws://localhost:3030", {
   transports: ["websocket"],
 });
 
-const locations = [
-  { lat: -23.5428, lng: -46.31 },
-  { lat: -23.5445, lng: -46.3242 },
-  { lat: -23.5407, lng: -46.3091 },
-];
+// Gera 10 locations em linha reta entre dois pontos (A e B)
+const start = { lat: -23.5428, lng: -46.31 };
+const end = { lat: -23.5328, lng: -46.29 };
+
+const locations = [];
+const steps = 9; // 10 pontos => 9 intervalos
+
+for (let i = 0; i <= steps; i++) {
+  const lat = start.lat + ((end.lat - start.lat) * i) / steps;
+  const lng = start.lng + ((end.lng - start.lng) * i) / steps;
+  locations.push({
+    lat: parseFloat(lat.toFixed(6)),
+    lng: parseFloat(lng.toFixed(6)),
+  });
+}
 
 let index = 0;
 
@@ -17,8 +27,8 @@ socket.on("connect", () => {
   console.log("✅ Conectado ao servidor WebSocket!");
 
   const data = {
-    roomName: "8f7835c3-fd53-49d5-a01a-d42ab9e8605e",
-    invite: 138,
+    roomName: "b4e7c1a0-b8d3-48b0-a75e-379464a9aa2d",
+    invite: 17,
     message: "Tranquilo?",
     location: locations[index],
   };

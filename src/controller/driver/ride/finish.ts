@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../../../service/prisma";
 import { finishRide } from "../../../database/repositories/rideRepository";
+import { io } from "../../../index";
 
 class FinishRideController {
   async execute(req: Request, res: Response) {
@@ -14,7 +15,7 @@ class FinishRideController {
       });
 
       if (!ride) {
-        return res.status(404);
+        return res.status(404).json({ message: "Corrida não encontrada" });
       }
 
       if (ride.status !== "ACCEPTED") {
@@ -23,7 +24,7 @@ class FinishRideController {
         });
       }
 
-      const rideUpdated = await finishRide(ride.id);
+      const rideUpdated = await finishRide(ride.id, io);
       return res.status(200).json({ ride: rideUpdated, status: "FINISHED" });
     } catch (error: any) {
       return res.status(400).json({ message: error.message });

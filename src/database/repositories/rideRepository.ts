@@ -104,6 +104,23 @@ const acceptRide = async (driverId: number, rideId: string) => {
         },
       },
       include: {
+        Driver: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phoneNumber: true,
+            photo: true,
+            car: {
+              select: {
+                id: true,
+                model: true,
+                plate: true,
+              },
+              take: 1,
+            },
+          },
+        },
         Room: {
           include: {
             invites: {
@@ -157,8 +174,17 @@ const cancelDriverRide = async (driverId: number, rideId: string) => {
   }
 };
 
-const finishRide = async (rideId: string) => {
-  await prisma.ride.update({
+const finishRide = async (rideId: string, io?: any) => {
+  const ride = await prisma.ride.findUnique({
+    where: { id: rideId },
+    select: { roomId: true },
+  });
+
+  if (!ride) {
+    throw new Error("Corrida não encontrada");
+  }
+
+  const rideUpdated = await prisma.ride.update({
     where: { id: rideId },
     data: {
       status: "FINISHED",
@@ -169,6 +195,17 @@ const finishRide = async (rideId: string) => {
       },
     },
   });
+
+  // Notificar via WebSocket se io estiver disponível
+  if (io && ride.roomId) {
+    io.to(ride.roomId).emit("rideFinished", {
+      rideId,
+      message: "Corrida finalizada com sucesso.",
+      status: "FINISHED",
+    });
+  }
+
+  return rideUpdated;
 };
 
 const getActiveRide = async ({

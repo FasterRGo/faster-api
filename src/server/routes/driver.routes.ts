@@ -2,8 +2,10 @@ import { Router } from "express";
 import {
   GetDriverController,
   EditDriverController,
+  UploadDriverPhotoController,
 } from "../../controller/driver/";
 import { driverMiddleWare } from "../../middleware/driverMiddleware";
+import { uploadSingle } from "../../middleware/uploadMiddleware";
 import { AcceptRideController } from "../../controller/driver/ride/accept";
 import { CancelDriverRideController } from "../../controller/driver/ride/cancel";
 import { FinishRideController } from "../../controller/driver/ride/finish";
@@ -11,6 +13,7 @@ import { ListenerRideController } from "../../controller/driver/ride/getReady";
 
 const getDriver = new GetDriverController();
 const editDriver = new EditDriverController();
+const uploadDriverPhoto = new UploadDriverPhotoController();
 const accept = new AcceptRideController();
 const cancel = new CancelDriverRideController();
 const finish = new FinishRideController();
@@ -26,6 +29,12 @@ const driverRoutes = (router: Router): void => {
     "/driver",
     driverMiddleWare,
     editDriver.execute.bind(EditDriverController)
+  );
+  router.post(
+    "/driver/upload-photo",
+    driverMiddleWare,
+    uploadSingle,
+    uploadDriverPhoto.execute.bind(UploadDriverPhotoController)
   );
   router.put(
     "/driver/ride/:rideId",
