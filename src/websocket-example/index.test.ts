@@ -1,4 +1,4 @@
-const io = require("socket.io-client");
+import { io } from "socket.io-client";
 
 // Substitua pela URL do WebSocket do seu backend
 const socket = io("ws://localhost:3030", {
@@ -9,7 +9,7 @@ const socket = io("ws://localhost:3030", {
 const start = { lat: -23.5428, lng: -46.31 };
 const end = { lat: -23.5328, lng: -46.29 };
 
-const locations = [];
+const locations: Array<{ lat: number; lng: number }> = [];
 const steps = 9; // 10 pontos => 9 intervalos
 
 for (let i = 0; i <= steps; i++) {
@@ -27,8 +27,8 @@ socket.on("connect", () => {
   console.log("✅ Conectado ao servidor WebSocket!");
 
   const data = {
-    roomName: "b4e7c1a0-b8d3-48b0-a75e-379464a9aa2d",
-    invite: 17,
+    roomName: "d7a129e5-c38b-4238-9443-9b070ceb11f0",
+    invite: 25,
     message: "Tranquilo?",
     location: locations[index],
   };
