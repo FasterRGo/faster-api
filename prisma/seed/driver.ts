@@ -167,7 +167,7 @@ export async function DefaultDriver() {
             password,
             name: driverData.name,
             phoneNumber: driverData.phoneNumber,
-            photo: "/uploads/users/max-verstappen.png",
+            photo: "/uploads/drivers/max-verstappen.png",
             car: {
               create: {
                 model: driverData.car.model,

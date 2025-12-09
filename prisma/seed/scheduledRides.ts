@@ -27,7 +27,7 @@ const scheduledRidesData: ScheduledRideData[] = [
     destinationCity: "São Paulo",
     originLabel: "Praça da Sé, São Paulo - SP",
     destinationLabel: "Avenida Paulista, São Paulo - SP",
-    price: 25.50,
+    price: 25.5,
     maxPassengers: 4,
   },
   {
@@ -40,7 +40,7 @@ const scheduledRidesData: ScheduledRideData[] = [
     destinationCity: "Rio de Janeiro",
     originLabel: "Praça da Sé, São Paulo - SP",
     destinationLabel: "Copacabana, Rio de Janeiro - RJ",
-    price: 350.00,
+    price: 350.0,
     maxPassengers: 3,
   },
   {
@@ -53,7 +53,7 @@ const scheduledRidesData: ScheduledRideData[] = [
     destinationCity: "São Paulo",
     originLabel: "Centro, São Paulo - SP",
     destinationLabel: "Aeroporto de Congonhas, São Paulo - SP",
-    price: 45.00,
+    price: 45.0,
     maxPassengers: 4,
   },
   {
@@ -66,7 +66,7 @@ const scheduledRidesData: ScheduledRideData[] = [
     destinationCity: "São Paulo",
     originLabel: "Centro, São Paulo - SP",
     destinationLabel: "Shopping Center Norte, São Paulo - SP",
-    price: 30.00,
+    price: 30.0,
     maxPassengers: 4,
   },
   {
@@ -79,8 +79,60 @@ const scheduledRidesData: ScheduledRideData[] = [
     destinationCity: "São Paulo",
     originLabel: "Praça da Sé, São Paulo - SP",
     destinationLabel: "Parque Ibirapuera, São Paulo - SP",
-    price: 35.00,
+    price: 35.0,
     maxPassengers: 4,
+  },
+  {
+    driverEmail: "juliana.rodrigues.driver@gmail.com",
+    initialLatitude: -23.5431,
+    initialLongitude: -46.3108,
+    finalLatitude: -23.5225,
+    finalLongitude: -46.1881,
+    originCity: "Suzano",
+    destinationCity: "Mogi das Cruzes",
+    originLabel: "Centro, Suzano - SP",
+    destinationLabel: "Centro, Mogi das Cruzes - SP",
+    price: 28.5,
+    maxPassengers: 4,
+  },
+  {
+    driverEmail: "fernando.lima.driver@gmail.com",
+    initialLatitude: -29.7831,
+    initialLongitude: -55.7919,
+    finalLatitude: -29.7547,
+    finalLongitude: -57.0883,
+    originCity: "Alegrete",
+    destinationCity: "Uruguaiana",
+    originLabel: "Centro, Alegrete - RS",
+    destinationLabel: "Centro, Uruguaiana - RS",
+    price: 120.0,
+    maxPassengers: 3,
+  },
+  {
+    driverEmail: "patricia.souza.driver@gmail.com",
+    initialLatitude: -15.56,
+    initialLongitude: -49.9486,
+    finalLatitude: -16.6864,
+    finalLongitude: -49.2643,
+    originCity: "Itapuranga",
+    destinationCity: "Goiânia",
+    originLabel: "Centro, Itapuranga - GO",
+    destinationLabel: "Centro, Goiânia - GO",
+    price: 65.0,
+    maxPassengers: 4,
+  },
+  {
+    driverEmail: "ricardo.martins.driver@gmail.com",
+    initialLatitude: 35.6762,
+    initialLongitude: 139.6503,
+    finalLatitude: 35.0116,
+    finalLongitude: 135.7681,
+    originCity: "Tokyo",
+    destinationCity: "Kyoto",
+    originLabel: "Centro, Tokyo - Japão",
+    destinationLabel: "Centro, Kyoto - Japão",
+    price: 450.0,
+    maxPassengers: 3,
   },
 ];
 
@@ -97,7 +149,9 @@ export async function DefaultScheduledRides() {
       });
 
       if (!driver) {
-        console.log(`⏭️  Motorista ${rideData.driverEmail} não encontrado, pulando corrida`);
+        console.log(
+          `⏭️  Motorista ${rideData.driverEmail} não encontrado, pulando corrida`
+        );
         skippedCount++;
         continue;
       }
@@ -115,7 +169,9 @@ export async function DefaultScheduledRides() {
       });
 
       if (existingRide) {
-        console.log(`⏭️  Corrida agendada já existe para ${driver.name} em ${scheduledDate}`);
+        console.log(
+          `⏭️  Corrida agendada já existe para ${driver.name} em ${scheduledDate}`
+        );
         skippedCount++;
         continue;
       }
@@ -144,11 +200,15 @@ export async function DefaultScheduledRides() {
         `✅ Corrida agendada criada para ${driver.name} - ${rideData.originCity} → ${rideData.destinationCity} em ${scheduledDate}`
       );
     } catch (error: any) {
-      console.error(`❌ Erro ao criar corrida agendada para ${rideData.driverEmail}:`, error.message);
+      console.error(
+        `❌ Erro ao criar corrida agendada para ${rideData.driverEmail}:`,
+        error.message
+      );
       skippedCount++;
     }
   }
 
-  console.log(`\n📊 Resumo ScheduledRides: ${createdCount} corridas criadas, ${skippedCount} já existiam ou foram puladas`);
+  console.log(
+    `\n📊 Resumo ScheduledRides: ${createdCount} corridas criadas, ${skippedCount} já existiam ou foram puladas`
+  );
 }
-
