@@ -174,6 +174,48 @@ const cancelDriverRide = async (driverId: number, rideId: string) => {
   }
 };
 
+const initializeRide = async (rideId: string, io?: any) => {
+  const ride = await prisma.ride.findUnique({
+    where: { id: rideId },
+    select: { roomId: true, status: true },
+  });
+
+  if (!ride) {
+    throw new Error("Corrida não encontrada");
+  }
+
+  if (ride.status !== "ACCEPTED") {
+    throw new Error(
+      `Corrida não pode ser inicializada. Status atual: ${ride.status}`
+    );
+  }
+
+  const rideUpdated = await prisma.ride.update({
+    where: { id: rideId },
+    data: {
+      status: "INITIALIZED",
+    },
+  });
+
+  console.log(
+    `✅ [INITIALIZE RIDE] Corrida ${rideId} atualizada para status: INITIALIZED`
+  );
+
+  // Notificar via WebSocket se io estiver disponível
+  if (io && ride.roomId) {
+    io.to(ride.roomId).emit("driverReady", {
+      rideId,
+      message: "Motorista chegou e está pronto para iniciar a viagem.",
+      status: "INITIALIZED",
+    });
+    console.log(
+      `📡 [INITIALIZE RIDE] Evento 'driverReady' emitido para a sala ${ride.roomId}`
+    );
+  }
+
+  return rideUpdated;
+};
+
 const finishRide = async (rideId: string, io?: any) => {
   const ride = await prisma.ride.findUnique({
     where: { id: rideId },
@@ -199,8 +241,14 @@ const finishRide = async (rideId: string, io?: any) => {
     },
   });
 
-  console.log(`✅ [FINISH RIDE] Corrida ${rideId} atualizada para status: FINISHED`);
-  console.log(`   Room ${ride.roomId} desativado: ${rideUpdated.Room?.active === false ? 'Sim' : 'Não'}`);
+  console.log(
+    `✅ [FINISH RIDE] Corrida ${rideId} atualizada para status: FINISHED`
+  );
+  console.log(
+    `   Room ${ride.roomId} desativado: ${
+      rideUpdated.Room?.active === false ? "Sim" : "Não"
+    }`
+  );
 
   // Notificar via WebSocket se io estiver disponível
   if (io && ride.roomId) {
@@ -209,7 +257,9 @@ const finishRide = async (rideId: string, io?: any) => {
       message: "Corrida finalizada com sucesso.",
       status: "FINISHED",
     });
-    console.log(`📡 [FINISH RIDE] Evento 'rideFinished' emitido para a sala ${ride.roomId}`);
+    console.log(
+      `📡 [FINISH RIDE] Evento 'rideFinished' emitido para a sala ${ride.roomId}`
+    );
   }
 
   return rideUpdated;
@@ -383,4 +433,5 @@ export {
   offerRides,
   createScheduledRide,
   joinScheduledRide,
+  initializeRide,
 };

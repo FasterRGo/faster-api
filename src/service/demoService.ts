@@ -1,6 +1,10 @@
 import { io } from "../index";
 import { prisma } from "./prisma";
-import { acceptRide, finishRide } from "../database/repositories/rideRepository";
+import {
+  acceptRide,
+  initializeRide,
+  finishRide,
+} from "../database/repositories/rideRepository";
 
 /**
  * Gera posição inicial do motorista (um pouco afastada da origem)
@@ -59,7 +63,7 @@ function generateCompleteRoute(
 ): Array<{ lat: number; lng: number }> {
   // Posição inicial do motorista (vindo buscar o passageiro)
   const driverStart = generateDriverStartPosition(originLat, originLng, 2);
-  
+
   // Dividir as localizações: 40% para ir até a origem, 60% para ir ao destino
   const toOriginCount = Math.floor(totalLocations * 0.4); // ~8 localizações
   const toDestinationCount = totalLocations - toOriginCount; // ~12 localizações
@@ -98,7 +102,9 @@ export async function handleDemoRide(rideId: string, roomId: string) {
   }
 
   console.log("\n" + "=".repeat(60));
-  console.log(`🚀 [MODO DEMO] Iniciando demo automático para corrida ${rideId}`);
+  console.log(
+    `🚀 [MODO DEMO] Iniciando demo automático para corrida ${rideId}`
+  );
   console.log("=".repeat(60));
 
   try {
@@ -145,11 +151,15 @@ export async function handleDemoRide(rideId: string, roomId: string) {
       return;
     }
 
-    console.log(`✅ [MODO DEMO] Motorista selecionado: ${driver.name} (ID: ${driver.id})`);
+    console.log(
+      `✅ [MODO DEMO] Motorista selecionado: ${driver.name} (ID: ${driver.id})`
+    );
 
     // 3. Aguardar 5 segundos antes de aceitar a corrida (para dar tempo do usuário ver o contador)
-    console.log(`⏳ [MODO DEMO] Aguardando 5 segundos antes de aceitar a corrida...`);
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    console.log(
+      `⏳ [MODO DEMO] Aguardando 5 segundos antes de aceitar a corrida...`
+    );
+    await new Promise((resolve) => setTimeout(resolve, 5000));
 
     // Atualizar o driverId na corrida (igual ao AcceptRideController)
     await prisma.ride.update({
@@ -170,38 +180,56 @@ export async function handleDemoRide(rideId: string, roomId: string) {
     console.log(`   driverId atualizado na corrida: ${driver.id}`);
 
     // Aguardar para garantir que o usuário está conectado na sala (o app chama joinRoom após criar a corrida)
-    console.log(`⏳ [MODO DEMO] Aguardando 3 segundos para usuário entrar na sala...`);
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    console.log(
+      `⏳ [MODO DEMO] Aguardando 3 segundos para usuário entrar na sala...`
+    );
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     // Emitir evento de motorista aceitou (mesmo formato do AcceptRideController)
     if (rideUpdated.Driver && roomId) {
       const driverData = {
         Driver: rideUpdated.Driver,
       };
-      
+
       console.log(`📡 [MODO DEMO] Preparando para emitir driverJoined`);
-      console.log(`   Driver completo:`, JSON.stringify(rideUpdated.Driver, null, 2));
+      console.log(
+        `   Driver completo:`,
+        JSON.stringify(rideUpdated.Driver, null, 2)
+      );
       console.log(`   Driver.name: ${rideUpdated.Driver.name}`);
       console.log(`   Driver.photo: ${rideUpdated.Driver.photo}`);
       console.log(`   Driver.car:`, rideUpdated.Driver.car);
-      console.log(`   Driver.car tipo:`, Array.isArray(rideUpdated.Driver.car) ? 'Array' : typeof rideUpdated.Driver.car);
-      
+      console.log(
+        `   Driver.car tipo:`,
+        Array.isArray(rideUpdated.Driver.car)
+          ? "Array"
+          : typeof rideUpdated.Driver.car
+      );
+
       // Emitir múltiplas vezes para garantir que seja recebido
       io.to(roomId).emit("driverJoined", driverData);
-      
+
       // Também emitir após um pequeno delay adicional
       setTimeout(() => {
         io.to(roomId).emit("driverJoined", driverData);
         console.log(`📡 [MODO DEMO] Evento 'driverJoined' re-emitido após 1s`);
       }, 1000);
-      
-      console.log(`📡 [MODO DEMO] Evento 'driverJoined' emitido para a sala ${roomId}`);
+
+      console.log(
+        `📡 [MODO DEMO] Evento 'driverJoined' emitido para a sala ${roomId}`
+      );
       console.log(`   Motorista: ${rideUpdated.Driver.name}`);
-      console.log(`   Carro: ${rideUpdated.Driver.car?.[0]?.model || 'N/A'} - ${rideUpdated.Driver.car?.[0]?.plate || 'N/A'}`);
+      console.log(
+        `   Carro: ${rideUpdated.Driver.car?.[0]?.model || "N/A"} - ${
+          rideUpdated.Driver.car?.[0]?.plate || "N/A"
+        }`
+      );
     } else {
-      console.warn(`⚠️ [MODO DEMO] Não foi possível emitir driverJoined - Driver ou roomId ausente`);
-      console.log(`   Driver:`, rideUpdated.Driver ? 'presente' : 'ausente');
-      console.log(`   roomId:`, roomId || 'ausente');
+      console.warn(
+        `⚠️ [MODO DEMO] Não foi possível emitir driverJoined - Driver ou roomId ausente`
+      );
+      console.log(`   Driver:`, rideUpdated.Driver ? "presente" : "ausente");
+      console.log(`   roomId:`, roomId || "ausente");
       if (rideUpdated.Driver) {
         console.log(`   Driver estrutura:`, Object.keys(rideUpdated.Driver));
       }
@@ -217,11 +245,19 @@ export async function handleDemoRide(rideId: string, roomId: string) {
     );
 
     console.log(`📍 [MODO DEMO] Geradas ${locations.length} localizações`);
-    console.log(`   → Primeira fase: Motorista indo buscar passageiro (${Math.floor(locations.length * 0.4)} localizações)`);
-    console.log(`   → Segunda fase: Motorista indo ao destino (${locations.length - Math.floor(locations.length * 0.4)} localizações)`);
+    const toOriginCount = Math.floor(locations.length * 0.4);
+    console.log(
+      `   → Primeira fase: Motorista indo buscar passageiro (${toOriginCount} localizações)`
+    );
+    console.log(
+      `   → Segunda fase: Motorista indo ao destino (${
+        locations.length - toOriginCount
+      } localizações)`
+    );
 
     // 5. Enviar localizações via WebSocket com intervalo de 2 segundos
     let locationIndex = 0;
+    let rideInitialized = false; // Flag para garantir que initializeRide seja chamado apenas uma vez
     const sendLocation = () => {
       if (locationIndex >= locations.length) {
         // Todas as localizações foram enviadas, finalizar corrida
@@ -229,9 +265,13 @@ export async function handleDemoRide(rideId: string, roomId: string) {
           try {
             console.log(`🏁 [MODO DEMO] Finalizando corrida ${rideId}...`);
             const finishedRide = await finishRide(rideId, io);
-            console.log(`✅ [MODO DEMO] Corrida ${rideId} finalizada automaticamente`);
+            console.log(
+              `✅ [MODO DEMO] Corrida ${rideId} finalizada automaticamente`
+            );
             console.log(`   Status: ${finishedRide.status}`);
-            console.log(`   Room ativo: ${finishedRide.Room?.active ? 'Sim' : 'Não'}`);
+            console.log(
+              `   Room ativo: ${finishedRide.Room?.active ? "Sim" : "Não"}`
+            );
             console.log("=".repeat(60) + "\n");
           } catch (error) {
             console.error(`❌ [MODO DEMO] Erro ao finalizar corrida:`, error);
@@ -242,7 +282,31 @@ export async function handleDemoRide(rideId: string, roomId: string) {
       }
 
       const location = locations[locationIndex];
-      
+
+      // Verifica se o motorista chegou ao ponto de origem (último ponto da primeira fase)
+      const isAtOrigin = locationIndex >= toOriginCount - 1; // Último ponto da primeira fase
+      if (isAtOrigin && !rideInitialized) {
+        try {
+          console.log(
+            `🚨 [MODO DEMO] Motorista chegou ao ponto de origem. Inicializando corrida...`
+          );
+          initializeRide(rideId, io); // Altera o status da corrida para INITIALIZED
+          rideInitialized = true;
+
+          // Emite evento para o frontend saber que o motorista chegou
+          io.to(roomId).emit("driverReady", {
+            rideId,
+            message: "Motorista chegou ao local de partida.",
+            location: location,
+          });
+          console.log(
+            `📡 [MODO DEMO] Evento 'driverReady' emitido para a sala ${roomId}`
+          );
+        } catch (error) {
+          console.error(`❌ [MODO DEMO] Erro ao inicializar corrida:`, error);
+        }
+      }
+
       // Emitir localização via WebSocket
       io.to(roomId).emit("updateLocation", {
         roomName: roomId,
@@ -257,22 +321,22 @@ export async function handleDemoRide(rideId: string, roomId: string) {
       });
 
       console.log(
-        `📍 [MODO DEMO] Localização ${locationIndex + 1}/${locations.length} enviada:`,
+        `📍 [MODO DEMO] Localização ${locationIndex + 1}/${
+          locations.length
+        } enviada:`,
         location
       );
 
       locationIndex++;
-      
+
       // Próxima localização em 2 segundos
       setTimeout(sendLocation, 2000);
     };
 
     // Iniciar envio de localizações após 1 segundo
     setTimeout(sendLocation, 1000);
-
   } catch (error: any) {
     console.error(`❌ [MODO DEMO] Erro no processo de demo:`, error);
     console.log("=".repeat(60) + "\n");
   }
 }
-
