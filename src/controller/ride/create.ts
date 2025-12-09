@@ -6,6 +6,7 @@ import {
 } from "../../database/repositories/rideRepository";
 import { rideValidator } from "../../utils/formValidator/rideValidator";
 import { calculate } from "../../service/rideInfo";
+import { handleDemoRide } from "../../service/demoService";
 
 class CreateRideController {
   async execute(req: Request, res: Response) {
@@ -23,7 +24,7 @@ class CreateRideController {
         to,
       });
 
-      const ride = await createRide({
+      const rideData = await createRide({
         finalLatitudeLocation: to.latitude,
         finalLongitudeLocation: to.longitude,
         initialLatitudeLocation: from.latitude,
@@ -32,7 +33,15 @@ class CreateRideController {
         userId,
       });
 
-      return res.status(201).json(ride);
+      // Se IS_DEMO=true, iniciar processo automático de demo
+      if (process.env.IS_DEMO === "true" && rideData.room?.id) {
+        // Executar demo de forma assíncrona (não bloquear a resposta)
+        handleDemoRide(rideData.ride.id, rideData.room.id).catch((error) => {
+          console.error("Erro ao executar demo:", error);
+        });
+      }
+
+      return res.status(201).json(rideData);
     } catch (err: any) {
       return res.status(400).json({ message: err.message });
     }

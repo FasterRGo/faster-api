@@ -32,6 +32,17 @@ const io = webSocket(httpServer);
 // Exportar io para uso nos controllers
 export { io };
 
+// Log de modo DEMO
+if (process.env.IS_DEMO === "true") {
+  console.log("\n" + "=".repeat(60));
+  console.log("🚀 MODO DEMO ATIVADO");
+  console.log("=".repeat(60));
+  console.log("⚠️  As corridas serão aceitas e finalizadas automaticamente");
+  console.log("⚠️  20 localizações serão enviadas automaticamente");
+  console.log("⚠️  Este modo é apenas para demonstração");
+  console.log("=".repeat(60) + "\n");
+}
+
 cron.schedule("* * * * *", async () => {
   // console.log("Running cron");
   await cancelOlderThan7MinutesRide(io);

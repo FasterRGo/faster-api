@@ -194,7 +194,13 @@ const finishRide = async (rideId: string, io?: any) => {
         },
       },
     },
+    include: {
+      Room: true,
+    },
   });
+
+  console.log(`✅ [FINISH RIDE] Corrida ${rideId} atualizada para status: FINISHED`);
+  console.log(`   Room ${ride.roomId} desativado: ${rideUpdated.Room?.active === false ? 'Sim' : 'Não'}`);
 
   // Notificar via WebSocket se io estiver disponível
   if (io && ride.roomId) {
@@ -203,6 +209,7 @@ const finishRide = async (rideId: string, io?: any) => {
       message: "Corrida finalizada com sucesso.",
       status: "FINISHED",
     });
+    console.log(`📡 [FINISH RIDE] Evento 'rideFinished' emitido para a sala ${ride.roomId}`);
   }
 
   return rideUpdated;

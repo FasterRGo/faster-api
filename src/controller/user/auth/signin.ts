@@ -13,22 +13,32 @@ class UserSignInController {
       console.log(email, password);
 
       if (!email || !password) {
-        return res
-          .status(400)
-          .json({ message: "Email and password are required" });
+        return res.status(400).json({
+          message: "Email e senha são obrigatórios",
+          error: "MISSING_CREDENTIALS",
+          details: "Por favor, preencha todos os campos",
+        });
       }
 
       const user = await findUserByEmail(email as string);
       const { AUTH_TOKEN, REFRESH_TOKEN } = env;
 
       if (!user) {
-        return res.status(400).json({ message: "Invalid email or password" });
+        return res.status(401).json({
+          message: "Email ou senha incorretos",
+          error: "INVALID_CREDENTIALS",
+          details: "Verifique suas credenciais e tente novamente",
+        });
       }
 
       const isPasswordValid = await compare(password as string, user.password);
 
       if (!isPasswordValid) {
-        return res.status(400).json({ message: "Invalid email or password" });
+        return res.status(401).json({
+          message: "Email ou senha incorretos",
+          error: "INVALID_CREDENTIALS",
+          details: "Verifique suas credenciais e tente novamente",
+        });
       }
 
       const id = user.id;
@@ -47,8 +57,10 @@ class UserSignInController {
         .status(200)
         .json({ user, accessToken: token, refreshToken: refreshT, activeRide });
     } catch (error: any) {
-      return res.status(400).json({
-        message: error.message,
+      return res.status(500).json({
+        message: "Erro ao processar login",
+        error: "LOGIN_ERROR",
+        details: "Tente novamente mais tarde ou entre em contato com o suporte",
       });
     }
   }
