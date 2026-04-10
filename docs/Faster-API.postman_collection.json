@@ -1,0 +1,788 @@
+{
+  "clientId": "faster-api",
+  "dateExported": "2026-04-10T12:00:00.000Z",
+  "version": "1.0.0",
+  "collections": [
+    {
+      "_type": "collection",
+      "name": "Faster API",
+      "description": "API collection for Faster Ride Matching System",
+      "authentication": {
+        "type": "bearer",
+        "bearerToken": "{{ auth_token }}"
+      },
+      "environment": {
+        "base_url": "http://localhost:3000",
+        "auth_token": "",
+        "refresh_token": "",
+        "user_id": "",
+        "driver_id": "",
+        "ride_id": "",
+        "card_id": "",
+        "room_id": "",
+        "scheduled_ride_id": ""
+      },
+      "items": [
+        {
+          "name": "User Authentication",
+          "description": "User sign in, sign up, and token refresh endpoints",
+          "_type": "folder",
+          "items": [
+            {
+              "name": "Sign Up",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/user/auth/sign-up",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"João Silva\",\n  \"email\": \"joao@example.com\",\n  \"password\": \"senha123\",\n  \"phoneNumber\": \"11987654321\"\n}"
+                },
+                "description": "Create a new user account"
+              }
+            },
+            {
+              "name": "Sign In",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/user/auth/sign-in",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"joao@example.com\",\n  \"password\": \"senha123\"\n}"
+                },
+                "description": "Sign in to user account and receive auth token"
+              }
+            },
+            {
+              "name": "Refresh Token",
+              "request": {
+                "method": "GET",
+                "url": "{{ base_url }}/user/auth/refresh",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Refresh authentication token"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Driver Authentication",
+          "description": "Driver sign in, sign up, and token refresh endpoints",
+          "_type": "folder",
+          "items": [
+            {
+              "name": "Sign Up",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/driver/auth/sign-up",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Carlos Motorista\",\n  \"email\": \"carlos@example.com\",\n  \"password\": \"senha123\",\n  \"phoneNumber\": \"11998765432\",\n  \"cpf\": \"12345678900\",\n  \"rg\": \"1234567\"\n}"
+                },
+                "description": "Create a new driver account"
+              }
+            },
+            {
+              "name": "Sign In",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/driver/auth/sign-in",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"carlos@example.com\",\n  \"password\": \"senha123\"\n}"
+                },
+                "description": "Sign in to driver account"
+              }
+            },
+            {
+              "name": "Refresh Token",
+              "request": {
+                "method": "GET",
+                "url": "{{ base_url }}/driver/auth/refresh",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Refresh driver authentication token"
+              }
+            }
+          ]
+        },
+        {
+          "name": "User Profile",
+          "description": "User profile management endpoints",
+          "_type": "folder",
+          "items": [
+            {
+              "name": "Get Profile",
+              "request": {
+                "method": "GET",
+                "url": "{{ base_url }}/user",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Get current user profile information"
+              }
+            },
+            {
+              "name": "Edit Profile",
+              "request": {
+                "method": "PATCH",
+                "url": "{{ base_url }}/user",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"João Silva Updated\",\n  \"phoneNumber\": \"11987654321\"\n}"
+                },
+                "description": "Update user profile information"
+              }
+            },
+            {
+              "name": "Upload Profile Photo",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/user/upload-photo",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "items": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "value": ""
+                    }
+                  ]
+                },
+                "description": "Upload or update user profile photo"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Driver Profile",
+          "description": "Driver profile and car management",
+          "_type": "folder",
+          "items": [
+            {
+              "name": "Get Profile",
+              "request": {
+                "method": "GET",
+                "url": "{{ base_url }}/driver",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Get current driver profile information"
+              }
+            },
+            {
+              "name": "Edit Profile",
+              "request": {
+                "method": "PATCH",
+                "url": "{{ base_url }}/driver",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Carlos Motorista Updated\",\n  \"phoneNumber\": \"11998765432\"\n}"
+                },
+                "description": "Update driver profile information"
+              }
+            },
+            {
+              "name": "Upload Profile Photo",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/driver/upload-photo",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "items": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "value": ""
+                    }
+                  ]
+                },
+                "description": "Upload or update driver profile photo"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Driver Cars",
+          "description": "Manage driver vehicles",
+          "_type": "folder",
+          "items": [
+            {
+              "name": "Create Car",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/driver/car",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"model\": \"Toyota Corolla\",\n  \"color\": \"Prata\",\n  \"licensePlate\": \"ABC1234\",\n  \"year\": 2023,\n  \"maxPassengers\": 4\n}"
+                },
+                "description": "Register a new vehicle for the driver"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Rides",
+          "description": "Ride creation, management, and evaluation",
+          "_type": "folder",
+          "items": [
+            {
+              "name": "Create Ride",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/ride",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"origin\": {\n    \"latitude\": -23.5505,\n    \"longitude\": -46.6333,\n    \"address\": \"Avenida Paulista, São Paulo\"\n  },\n  \"destination\": {\n    \"latitude\": -23.5515,\n    \"longitude\": -46.6325,\n    \"address\": \"Parque do Ibirapuera, São Paulo\"\n  },\n  \"passengersCount\": 1\n}"
+                },
+                "description": "Create a new ride request"
+              }
+            },
+            {
+              "name": "List Rides",
+              "request": {
+                "method": "GET",
+                "url": "{{ base_url }}/ride",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "List all rides for the user"
+              }
+            },
+            {
+              "name": "Get Ride Details",
+              "request": {
+                "method": "GET",
+                "url": "{{ base_url }}/ride/{{ ride_id }}",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Get detailed information about a specific ride"
+              }
+            },
+            {
+              "name": "Calculate Ride Price",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/ride/calculate",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"origin\": {\n    \"latitude\": -23.5505,\n    \"longitude\": -46.6333\n  },\n  \"destination\": {\n    \"latitude\": -23.5515,\n    \"longitude\": -46.6325\n  }\n}"
+                },
+                "description": "Calculate the price for a potential ride"
+              }
+            },
+            {
+              "name": "Evaluate Ride",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/ride/{{ ride_id }}/evaluate",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Excelente viagem!\"\n}"
+                },
+                "description": "Rate and evaluate a completed ride"
+              }
+            },
+            {
+              "name": "Cancel Ride",
+              "request": {
+                "method": "DELETE",
+                "url": "{{ base_url }}/ride/{{ ride_id }}",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Cancel an existing ride"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Driver Rides",
+          "description": "Driver ride acceptance, cancellation, and completion",
+          "_type": "folder",
+          "items": [
+            {
+              "name": "Accept Ride",
+              "request": {
+                "method": "PUT",
+                "url": "{{ base_url }}/driver/ride/{{ ride_id }}",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                },
+                "description": "Accept a ride offer as a driver"
+              }
+            },
+            {
+              "name": "Cancel Ride",
+              "request": {
+                "method": "DELETE",
+                "url": "{{ base_url }}/driver/ride/{{ ride_id }}",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Cancel an accepted ride as a driver"
+              }
+            },
+            {
+              "name": "Finish Ride",
+              "request": {
+                "method": "PUT",
+                "url": "{{ base_url }}/driver/ride/{{ ride_id }}/finish",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"finalLatitude\": -23.5515,\n  \"finalLongitude\": -46.6325\n}"
+                },
+                "description": "Mark a ride as completed"
+              }
+            },
+            {
+              "name": "Ready for Ride",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/driver/ride/ready",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"latitude\": -23.5505,\n  \"longitude\": -46.6333\n}"
+                },
+                "description": "Indicate driver is ready to accept rides with location"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Payment Cards",
+          "description": "User payment card management",
+          "_type": "folder",
+          "items": [
+            {
+              "name": "Create Card",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/payment/card",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardNumber\": \"4111111111111111\",\n  \"cardHolder\": \"JOAO SILVA\",\n  \"expiryMonth\": \"12\",\n  \"expiryYear\": \"2025\",\n  \"cvv\": \"123\"\n}"
+                },
+                "description": "Register a new payment card"
+              }
+            },
+            {
+              "name": "List Cards",
+              "request": {
+                "method": "GET",
+                "url": "{{ base_url }}/payment/card",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Get all registered payment cards"
+              }
+            },
+            {
+              "name": "Delete Card",
+              "request": {
+                "method": "DELETE",
+                "url": "{{ base_url }}/payment/card/{{ card_id }}",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Delete a registered payment card"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Common Places",
+          "description": "User saved locations management",
+          "_type": "folder",
+          "items": [
+            {
+              "name": "Get Common Places",
+              "request": {
+                "method": "GET",
+                "url": "{{ base_url }}/common-places",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Get all user's saved common places"
+              }
+            },
+            {
+              "name": "Create Common Place",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/common-places",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Casa\",\n  \"latitude\": -23.5505,\n  \"longitude\": -46.6333,\n  \"address\": \"Rua Principal, 123, São Paulo\"\n}"
+                },
+                "description": "Save a new common location"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Scheduled Rides",
+          "description": "Recurring ride scheduling",
+          "_type": "folder",
+          "items": [
+            {
+              "name": "Create Scheduled Ride",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/scheduled-ride",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"origin\": {\n    \"latitude\": -23.5505,\n    \"longitude\": -46.6333,\n    \"address\": \"Avenida Paulista\"\n  },\n  \"destination\": {\n    \"latitude\": -23.5515,\n    \"longitude\": -46.6325,\n    \"address\": \"Centro\"\n  },\n  \"weekDays\": [1, 2, 3, 4, 5],\n  \"time\": \"08:00\",\n  \"maxPassengers\": 4\n}"
+                },
+                "description": "Create a recurring scheduled ride (driver)"
+              }
+            },
+            {
+              "name": "Get Scheduled Rides",
+              "request": {
+                "method": "GET",
+                "url": "{{ base_url }}/scheduled-ride",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "description": "Get all available scheduled rides"
+              }
+            },
+            {
+              "name": "Join Scheduled Ride",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/scheduled-ride/join",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"scheduledRideId\": \"{{ scheduled_ride_id }}\"\n}"
+                },
+                "description": "Join an existing scheduled ride (passenger)"
+              }
+            },
+            {
+              "name": "Search Next Ride",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/scheduled-ride/search-next",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"origin\": {\n    \"latitude\": -23.5505,\n    \"longitude\": -46.6333\n  },\n  \"destination\": {\n    \"latitude\": -23.5515,\n    \"longitude\": -46.6325\n  }\n}"
+                },
+                "description": "Search for next available scheduled ride"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invites & Rooms",
+          "description": "Share rides and manage room participants",
+          "_type": "folder",
+          "items": [
+            {
+              "name": "Create Invite",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/invite/room/{{ room_id }}",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"amigo@example.com\"\n}"
+                },
+                "description": "Send an invite to join a ride room"
+              }
+            },
+            {
+              "name": "Join Room",
+              "request": {
+                "method": "POST",
+                "url": "{{ base_url }}/invite/join",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"inviteCode\": \"ABC123\"\n}"
+                },
+                "description": "Accept an invite and join a ride room"
+              }
+            },
+            {
+              "name": "Get Room Participants",
+              "request": {
+                "method": "GET",
+                "url": "{{ base_url }}/invite/room/{{ room_id }}/participants",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Get all participants in a room"
+              }
+            },
+            {
+              "name": "Get My Invite in Room",
+              "request": {
+                "method": "GET",
+                "url": "{{ base_url }}/invite/room/{{ room_id }}/my-invite",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Get current user's invite information in a room"
+              }
+            },
+            {
+              "name": "Get Ride by Room ID",
+              "request": {
+                "method": "GET",
+                "url": "{{ base_url }}/invite/room/{{ room_id }}/ride",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{ auth_token }}"
+                  }
+                ],
+                "description": "Get ride information for a specific room"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

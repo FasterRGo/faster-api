@@ -1,0 +1,1011 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-04-10T12:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v9.0.0",
+  "resources": [
+    {
+      "_id": "env_faster_api",
+      "parentId": "wrk_faster_api",
+      "_type": "environment",
+      "name": "Development",
+      "data": {
+        "base_url": "http://localhost:3000",
+        "auth_token": "",
+        "refresh_token": "",
+        "user_id": "",
+        "driver_id": "",
+        "ride_id": "",
+        "card_id": "",
+        "room_id": "",
+        "scheduled_ride_id": ""
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1712748000000
+    },
+    {
+      "_id": "env_faster_api_prod",
+      "parentId": "wrk_faster_api",
+      "_type": "environment",
+      "name": "Production",
+      "data": {
+        "base_url": "https://api.faster.com",
+        "auth_token": "",
+        "refresh_token": "",
+        "user_id": "",
+        "driver_id": "",
+        "ride_id": "",
+        "card_id": "",
+        "room_id": "",
+        "scheduled_ride_id": ""
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1712748100000
+    },
+    {
+      "_id": "wrk_faster_api",
+      "_type": "workspace",
+      "name": "Faster API",
+      "description": "API for Faster Ride Matching System",
+      "scope": "collection",
+      "visibleMemberIds": []
+    },
+    {
+      "_id": "fld_user_auth",
+      "parentId": "wrk_faster_api",
+      "_type": "request_group",
+      "name": "User Authentication",
+      "description": "User sign in, sign up, and token refresh endpoints",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1712748000001
+    },
+    {
+      "_id": "req_user_signup",
+      "parentId": "fld_user_auth",
+      "_type": "request",
+      "name": "Sign Up",
+      "url": "{{ base_url }}/user/auth/sign-up",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"name\": \"João Silva\",\"email\": \"joao@example.com\",\"password\": \"senha123\",\"phoneNumber\": \"11987654321\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748000001,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_user_signin",
+      "parentId": "fld_user_auth",
+      "_type": "request",
+      "name": "Sign In",
+      "url": "{{ base_url }}/user/auth/sign-in",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"email\": \"joao@example.com\",\"password\": \"senha123\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748000002,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_user_refresh",
+      "parentId": "fld_user_auth",
+      "_type": "request",
+      "name": "Refresh Token",
+      "url": "{{ base_url }}/user/auth/refresh",
+      "method": "GET",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748000003,
+      "isPrivate": false
+    },
+    {
+      "_id": "fld_driver_auth",
+      "parentId": "wrk_faster_api",
+      "_type": "request_group",
+      "name": "Driver Authentication",
+      "description": "Driver sign in, sign up, and token refresh endpoints",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1712748010001
+    },
+    {
+      "_id": "req_driver_signup",
+      "parentId": "fld_driver_auth",
+      "_type": "request",
+      "name": "Sign Up",
+      "url": "{{ base_url }}/driver/auth/sign-up",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"name\": \"Carlos Motorista\",\"email\": \"carlos@example.com\",\"password\": \"senha123\",\"phoneNumber\": \"11998765432\",\"cpf\": \"12345678900\",\"rg\": \"1234567\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748010001,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_driver_signin",
+      "parentId": "fld_driver_auth",
+      "_type": "request",
+      "name": "Sign In",
+      "url": "{{ base_url }}/driver/auth/sign-in",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"email\": \"carlos@example.com\",\"password\": \"senha123\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748010002,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_driver_refresh",
+      "parentId": "fld_driver_auth",
+      "_type": "request",
+      "name": "Refresh Token",
+      "url": "{{ base_url }}/driver/auth/refresh",
+      "method": "GET",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748010003,
+      "isPrivate": false
+    },
+    {
+      "_id": "fld_user_profile",
+      "parentId": "wrk_faster_api",
+      "_type": "request_group",
+      "name": "User Profile",
+      "description": "User profile management endpoints",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1712748020001
+    },
+    {
+      "_id": "req_user_get",
+      "parentId": "fld_user_profile",
+      "_type": "request",
+      "name": "Get Profile",
+      "url": "{{ base_url }}/user",
+      "method": "GET",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748020001,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_user_edit",
+      "parentId": "fld_user_profile",
+      "_type": "request",
+      "name": "Edit Profile",
+      "url": "{{ base_url }}/user",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"name\": \"João Silva Updated\",\"phoneNumber\": \"11987654321\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748020002,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_user_upload_photo",
+      "parentId": "fld_user_profile",
+      "_type": "request",
+      "name": "Upload Profile Photo",
+      "url": "{{ base_url }}/user/upload-photo",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "file",
+            "value": "",
+            "type": "file"
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748020003,
+      "isPrivate": false
+    },
+    {
+      "_id": "fld_driver_profile",
+      "parentId": "wrk_faster_api",
+      "_type": "request_group",
+      "name": "Driver Profile",
+      "description": "Driver profile and car management",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1712748030001
+    },
+    {
+      "_id": "req_driver_get",
+      "parentId": "fld_driver_profile",
+      "_type": "request",
+      "name": "Get Profile",
+      "url": "{{ base_url }}/driver",
+      "method": "GET",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748030001,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_driver_edit",
+      "parentId": "fld_driver_profile",
+      "_type": "request",
+      "name": "Edit Profile",
+      "url": "{{ base_url }}/driver",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"name\": \"Carlos Motorista Updated\",\"phoneNumber\": \"11998765432\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748030002,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_driver_upload_photo",
+      "parentId": "fld_driver_profile",
+      "_type": "request",
+      "name": "Upload Profile Photo",
+      "url": "{{ base_url }}/driver/upload-photo",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "file",
+            "value": "",
+            "type": "file"
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748030003,
+      "isPrivate": false
+    },
+    {
+      "_id": "fld_cars",
+      "parentId": "wrk_faster_api",
+      "_type": "request_group",
+      "name": "Driver Cars",
+      "description": "Manage driver vehicles",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1712748040001
+    },
+    {
+      "_id": "req_car_create",
+      "parentId": "fld_cars",
+      "_type": "request",
+      "name": "Create Car",
+      "url": "{{ base_url }}/driver/car",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"model\": \"Toyota Corolla\",\"color\": \"Prata\",\"licensePlate\": \"ABC1234\",\"year\": 2023,\"maxPassengers\": 4}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748040001,
+      "isPrivate": false
+    },
+    {
+      "_id": "fld_rides",
+      "parentId": "wrk_faster_api",
+      "_type": "request_group",
+      "name": "Rides",
+      "description": "Ride creation, management, and evaluation",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1712748050001
+    },
+    {
+      "_id": "req_ride_create",
+      "parentId": "fld_rides",
+      "_type": "request",
+      "name": "Create Ride",
+      "url": "{{ base_url }}/ride",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"origin\": {\"latitude\": -23.5505,\"longitude\": -46.6333,\"address\": \"Avenida Paulista, São Paulo\"},\"destination\": {\"latitude\": -23.5515,\"longitude\": -46.6325,\"address\": \"Parque do Ibirapuera, São Paulo\"},\"passengersCount\": 1}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748050001,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_ride_list",
+      "parentId": "fld_rides",
+      "_type": "request",
+      "name": "List Rides",
+      "url": "{{ base_url }}/ride",
+      "method": "GET",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748050002,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_ride_get",
+      "parentId": "fld_rides",
+      "_type": "request",
+      "name": "Get Ride Details",
+      "url": "{{ base_url }}/ride/{{ ride_id }}",
+      "method": "GET",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748050003,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_ride_calculate",
+      "parentId": "fld_rides",
+      "_type": "request",
+      "name": "Calculate Ride Price",
+      "url": "{{ base_url }}/ride/calculate",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"origin\": {\"latitude\": -23.5505,\"longitude\": -46.6333},\"destination\": {\"latitude\": -23.5515,\"longitude\": -46.6325}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748050004,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_ride_evaluate",
+      "parentId": "fld_rides",
+      "_type": "request",
+      "name": "Evaluate Ride",
+      "url": "{{ base_url }}/ride/{{ ride_id }}/evaluate",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"rating\": 5,\"comment\": \"Excelente viagem!\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748050005,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_ride_cancel",
+      "parentId": "fld_rides",
+      "_type": "request",
+      "name": "Cancel Ride",
+      "url": "{{ base_url }}/ride/{{ ride_id }}",
+      "method": "DELETE",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748050006,
+      "isPrivate": false
+    },
+    {
+      "_id": "fld_driver_rides",
+      "parentId": "wrk_faster_api",
+      "_type": "request_group",
+      "name": "Driver Rides",
+      "description": "Driver ride acceptance, cancellation, and completion",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1712748060001
+    },
+    {
+      "_id": "req_driver_ride_accept",
+      "parentId": "fld_driver_rides",
+      "_type": "request",
+      "name": "Accept Ride",
+      "url": "{{ base_url }}/driver/ride/{{ ride_id }}",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748060001,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_driver_ride_cancel",
+      "parentId": "fld_driver_rides",
+      "_type": "request",
+      "name": "Cancel Ride",
+      "url": "{{ base_url }}/driver/ride/{{ ride_id }}",
+      "method": "DELETE",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748060002,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_driver_ride_finish",
+      "parentId": "fld_driver_rides",
+      "_type": "request",
+      "name": "Finish Ride",
+      "url": "{{ base_url }}/driver/ride/{{ ride_id }}/finish",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"finalLatitude\": -23.5515,\"finalLongitude\": -46.6325}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748060003,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_driver_ready",
+      "parentId": "fld_driver_rides",
+      "_type": "request",
+      "name": "Ready for Ride",
+      "url": "{{ base_url }}/driver/ride/ready",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"latitude\": -23.5505,\"longitude\": -46.6333}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748060004,
+      "isPrivate": false
+    },
+    {
+      "_id": "fld_cards",
+      "parentId": "wrk_faster_api",
+      "_type": "request_group",
+      "name": "Payment Cards",
+      "description": "User payment card management",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1712748070001
+    },
+    {
+      "_id": "req_card_create",
+      "parentId": "fld_cards",
+      "_type": "request",
+      "name": "Create Card",
+      "url": "{{ base_url }}/payment/card",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"cardNumber\": \"4111111111111111\",\"cardHolder\": \"JOAO SILVA\",\"expiryMonth\": \"12\",\"expiryYear\": \"2025\",\"cvv\": \"123\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748070001,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_card_list",
+      "parentId": "fld_cards",
+      "_type": "request",
+      "name": "List Cards",
+      "url": "{{ base_url }}/payment/card",
+      "method": "GET",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748070002,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_card_delete",
+      "parentId": "fld_cards",
+      "_type": "request",
+      "name": "Delete Card",
+      "url": "{{ base_url }}/payment/card/{{ card_id }}",
+      "method": "DELETE",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748070003,
+      "isPrivate": false
+    },
+    {
+      "_id": "fld_common_places",
+      "parentId": "wrk_faster_api",
+      "_type": "request_group",
+      "name": "Common Places",
+      "description": "User saved locations management",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1712748080001
+    },
+    {
+      "_id": "req_common_places_get",
+      "parentId": "fld_common_places",
+      "_type": "request",
+      "name": "Get Common Places",
+      "url": "{{ base_url }}/common-places",
+      "method": "GET",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748080001,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_common_places_create",
+      "parentId": "fld_common_places",
+      "_type": "request",
+      "name": "Create Common Place",
+      "url": "{{ base_url }}/common-places",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"name\": \"Casa\",\"latitude\": -23.5505,\"longitude\": -46.6333,\"address\": \"Rua Principal, 123, São Paulo\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748080002,
+      "isPrivate": false
+    },
+    {
+      "_id": "fld_scheduled_rides",
+      "parentId": "wrk_faster_api",
+      "_type": "request_group",
+      "name": "Scheduled Rides",
+      "description": "Recurring ride scheduling",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1712748090001
+    },
+    {
+      "_id": "req_scheduled_ride_create",
+      "parentId": "fld_scheduled_rides",
+      "_type": "request",
+      "name": "Create Scheduled Ride",
+      "url": "{{ base_url }}/scheduled-ride",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"origin\": {\"latitude\": -23.5505,\"longitude\": -46.6333,\"address\": \"Avenida Paulista\"},\"destination\": {\"latitude\": -23.5515,\"longitude\": -46.6325,\"address\": \"Centro\"},\"weekDays\": [1, 2, 3, 4, 5],\"time\": \"08:00\",\"maxPassengers\": 4}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748090001,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_scheduled_ride_get",
+      "parentId": "fld_scheduled_rides",
+      "_type": "request",
+      "name": "Get Scheduled Rides",
+      "url": "{{ base_url }}/scheduled-ride",
+      "method": "GET",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748090002,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_scheduled_ride_join",
+      "parentId": "fld_scheduled_rides",
+      "_type": "request",
+      "name": "Join Scheduled Ride",
+      "url": "{{ base_url }}/scheduled-ride/join",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"scheduledRideId\": \"{{ scheduled_ride_id }}\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748090003,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_scheduled_ride_search",
+      "parentId": "fld_scheduled_rides",
+      "_type": "request",
+      "name": "Search Next Ride",
+      "url": "{{ base_url }}/scheduled-ride/search-next",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"origin\": {\"latitude\": -23.5505,\"longitude\": -46.6333},\"destination\": {\"latitude\": -23.5515,\"longitude\": -46.6325}}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748090004,
+      "isPrivate": false
+    },
+    {
+      "_id": "fld_invites",
+      "parentId": "wrk_faster_api",
+      "_type": "request_group",
+      "name": "Invites & Rooms",
+      "description": "Share rides and manage room participants",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1712748100001
+    },
+    {
+      "_id": "req_invite_create",
+      "parentId": "fld_invites",
+      "_type": "request",
+      "name": "Create Invite",
+      "url": "{{ base_url }}/invite/room/{{ room_id }}",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"email\": \"amigo@example.com\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748100001,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_join_room",
+      "parentId": "fld_invites",
+      "_type": "request",
+      "name": "Join Room",
+      "url": "{{ base_url }}/invite/join",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"inviteCode\": \"ABC123\"}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748100002,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_room_participants",
+      "parentId": "fld_invites",
+      "_type": "request",
+      "name": "Get Room Participants",
+      "url": "{{ base_url }}/invite/room/{{ room_id }}/participants",
+      "method": "GET",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748100003,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_user_invite",
+      "parentId": "fld_invites",
+      "_type": "request",
+      "name": "Get My Invite in Room",
+      "url": "{{ base_url }}/invite/room/{{ room_id }}/my-invite",
+      "method": "GET",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748100004,
+      "isPrivate": false
+    },
+    {
+      "_id": "req_room_ride",
+      "parentId": "fld_invites",
+      "_type": "request",
+      "name": "Get Ride by Room ID",
+      "url": "{{ base_url }}/invite/room/{{ room_id }}/ride",
+      "method": "GET",
+      "body": null,
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ auth_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1712748100005,
+      "isPrivate": false
+    }
+  ]
+}
