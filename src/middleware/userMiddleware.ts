@@ -6,6 +6,13 @@ import { findUserById } from "../database/repositories/userRepository";
 
 async function userMiddleWare(req: Request, res: Response, next: NextFunction) {
   const { AUTH_TOKEN } = env;
+  console.log(
+    req.url,
+    req.method,
+    new Date().toISOString(),
+    " - Acesso à rota protegida",
+  );
+  console.log(req.body, " - BODY");
   try {
     const authorization = req.headers.authorization;
     if (!authorization) {
