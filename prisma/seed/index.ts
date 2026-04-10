@@ -2,9 +2,7 @@ import { DefaultPaymentMethodSeed } from "./defaultPaymentMethods";
 import { DefaultUser } from "./user";
 import { DefaultDriver } from "./driver";
 import { DefaultScheduledRides } from "./scheduledRides";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../src/service/prisma";
 
 async function main() {
   await DefaultPaymentMethodSeed();

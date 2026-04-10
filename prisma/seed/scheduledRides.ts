@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../src/service/prisma";
 
 interface ScheduledRideData {
   driverEmail: string;
@@ -150,7 +148,7 @@ export async function DefaultScheduledRides() {
 
       if (!driver) {
         console.log(
-          `⏭️  Motorista ${rideData.driverEmail} não encontrado, pulando corrida`
+          `⏭️  Motorista ${rideData.driverEmail} não encontrado, pulando corrida`,
         );
         skippedCount++;
         continue;
@@ -170,7 +168,7 @@ export async function DefaultScheduledRides() {
 
       if (existingRide) {
         console.log(
-          `⏭️  Corrida agendada já existe para ${driver.name} em ${scheduledDate}`
+          `⏭️  Corrida agendada já existe para ${driver.name} em ${scheduledDate}`,
         );
         skippedCount++;
         continue;
@@ -197,18 +195,18 @@ export async function DefaultScheduledRides() {
 
       createdCount++;
       console.log(
-        `✅ Corrida agendada criada para ${driver.name} - ${rideData.originCity} → ${rideData.destinationCity} em ${scheduledDate}`
+        `✅ Corrida agendada criada para ${driver.name} - ${rideData.originCity} → ${rideData.destinationCity} em ${scheduledDate}`,
       );
     } catch (error: any) {
       console.error(
         `❌ Erro ao criar corrida agendada para ${rideData.driverEmail}:`,
-        error.message
+        error.message,
       );
       skippedCount++;
     }
   }
 
   console.log(
-    `\n📊 Resumo ScheduledRides: ${createdCount} corridas criadas, ${skippedCount} já existiam ou foram puladas`
+    `\n📊 Resumo ScheduledRides: ${createdCount} corridas criadas, ${skippedCount} já existiam ou foram puladas`,
   );
 }

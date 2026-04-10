@@ -1,8 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
-
-const prisma = new PrismaClient();
-
+import { prisma } from "../../src/service/prisma";
 export async function DefaultUser() {
   const user = await prisma.user.findFirst({
     where: { email: "gstsilva.async@gmail.com" },
