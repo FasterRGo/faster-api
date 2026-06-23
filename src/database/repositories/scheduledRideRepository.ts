@@ -265,7 +265,8 @@ type FindNearestScheduledParams = {
   fromLongitude: number;
   toLatitude: number;
   toLongitude: number;
-  maxDistanceKm?: number; // optional radial filter per endpoint
+  maxOriginRadiusKm?: number;
+  maxDestinationRadiusKm?: number;
   limit?: number;
 };
 
@@ -274,7 +275,8 @@ const findNearestScheduledRides = async ({
   fromLongitude,
   toLatitude,
   toLongitude,
-  maxDistanceKm = 50,
+  maxOriginRadiusKm = 30,
+  maxDestinationRadiusKm = 50,
   limit = 20,
 }: FindNearestScheduledParams) => {
   const sql = Prisma.sql`
@@ -287,68 +289,52 @@ const findNearestScheduledRides = async ({
       d."phoneNumber" AS driver_phone_number,
       (
         6371 * acos(
-          cos(radians(${fromLatitude})) * cos(radians(sr."initialLatitudeLocation")) *
+          LEAST(1.0, cos(radians(${fromLatitude})) * cos(radians(sr."initialLatitudeLocation")) *
           cos(radians(sr."initialLongitudeLocation") - radians(${fromLongitude})) +
-          sin(radians(${fromLatitude})) * sin(radians(sr."initialLatitudeLocation"))
+          sin(radians(${fromLatitude})) * sin(radians(sr."initialLatitudeLocation")))
         )
       ) AS initial_distance_km,
       (
         6371 * acos(
-          cos(radians(${toLatitude})) * cos(radians(sr."finalLatitudeLocation")) *
+          LEAST(1.0, cos(radians(${toLatitude})) * cos(radians(sr."finalLatitudeLocation")) *
           cos(radians(sr."finalLongitudeLocation") - radians(${toLongitude})) +
-          sin(radians(${toLatitude})) * sin(radians(sr."finalLatitudeLocation"))
+          sin(radians(${toLatitude})) * sin(radians(sr."finalLatitudeLocation")))
         )
-      ) AS destination_distance_km,
-      (
-        (
-          6371 * acos(
-            cos(radians(${fromLatitude})) * cos(radians(sr."initialLatitudeLocation")) *
-            cos(radians(sr."initialLongitudeLocation") - radians(${fromLongitude})) +
-            sin(radians(${fromLatitude})) * sin(radians(sr."initialLatitudeLocation"))
-          )
-        ) + (
-          6371 * acos(
-            cos(radians(${toLatitude})) * cos(radians(sr."finalLatitudeLocation")) *
-            cos(radians(sr."finalLongitudeLocation") - radians(${toLongitude})) +
-            sin(radians(${toLatitude})) * sin(radians(sr."finalLatitudeLocation"))
-          )
-        )
-      ) AS total_distance_km
+      ) AS destination_distance_km
     FROM "ScheduledRide" sr
     LEFT JOIN "Driver" d ON d.id = sr."driverId"
     WHERE
       sr.status IN ('CREATED', 'OPEN', 'AVAILABLE')
       AND (
         6371 * acos(
-          cos(radians(${fromLatitude})) * cos(radians(sr."initialLatitudeLocation")) *
+          LEAST(1.0, cos(radians(${fromLatitude})) * cos(radians(sr."initialLatitudeLocation")) *
           cos(radians(sr."initialLongitudeLocation") - radians(${fromLongitude})) +
-          sin(radians(${fromLatitude})) * sin(radians(sr."initialLatitudeLocation"))
+          sin(radians(${fromLatitude})) * sin(radians(sr."initialLatitudeLocation")))
         )
-      ) <= ${maxDistanceKm}
+      ) <= ${maxOriginRadiusKm}
       AND (
         6371 * acos(
-          cos(radians(${toLatitude})) * cos(radians(sr."finalLatitudeLocation")) *
+          LEAST(1.0, cos(radians(${toLatitude})) * cos(radians(sr."finalLatitudeLocation")) *
           cos(radians(sr."finalLongitudeLocation") - radians(${toLongitude})) +
-          sin(radians(${toLatitude})) * sin(radians(sr."finalLatitudeLocation"))
+          sin(radians(${toLatitude})) * sin(radians(sr."finalLatitudeLocation")))
         )
-      ) <= ${maxDistanceKm}
-    ORDER BY total_distance_km ASC
+      ) <= ${maxDestinationRadiusKm}
+    ORDER BY initial_distance_km ASC
     LIMIT ${limit}
   `;
 
   const rows = await prisma.$queryRaw<any[]>(sql);
 
-  const results = rows.map((r) => ({
+  return rows.map((r) => ({
     ...r,
-    driver: {
+    Driver: {
       id: r.driver_id,
       name: r.driver_name,
       email: r.driver_email,
+      photo: r.driver_photo,
       phoneNumber: r.driver_phone_number,
     },
   }));
-
-  return results;
 };
 
 type FindByCitiesParams = {
